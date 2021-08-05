@@ -3,6 +3,7 @@ const express = require("express");
 //core impor
 const cors = require("./utils/cors");
 const sequelize = require("./utils/database");
+const userdb = require("./utils/userDatabase");
 //MODELS IMPORT
 const admin = require("./models/admin");
 const school = require("./models/school");
@@ -10,9 +11,12 @@ const faculty = require("./models/faculty");
 const department = require("./models/department");
 const level = require("./models/levels");
 const pq = require("./models/pastQuestion");
+const user = require("./models/user");
+const keys = require("./models/lisenseKey");
 //custom imports
 const authRoute = require("./routes/auth");
 const schoolRoute = require("./routes/school");
+const lisenseKey = require("./models/lisenseKey");
 const app = express();
 const server = http.createServer(app);
 app.use(cors);
@@ -20,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoute);
 app.use("/create", schoolRoute);
+admin.hasMany(keys);
 //admin.hasMany(school);
 school.hasMany(faculty);
 school.hasMany(department);
@@ -31,8 +36,9 @@ level.hasMany(pq);
 department.hasMany(level);
 school.hasMany(level);
 faculty.hasMany(level);
-
-sequelize.sync({ alter: true }).then(() => {
+user.hasMany(keys);
+sequelize.sync({ alter: true }).then(async () => {
+  await userdb.sync();
   server.listen(4500);
   console.log("listening...");
 });

@@ -6,6 +6,8 @@ const schoolController = require("../controllers/school");
 const schoolHelper = require("../helpers/school");
 const uploadHelper = require("../helpers/pastquestionupload");
 const uploadController = require("../controllers/uploadPastQuestion");
+const keyGen = require("../helpers/keyGen");
+const keyGenController = require("../controllers/lisenseKey");
 router.post(
   "/school",
   schoolHelper.validateSchoolCreationDetails,
@@ -33,4 +35,5 @@ router.post(
   schoolHelper.validateLevelCredentials,
   schoolController.createLevel
 );
+router.post("/keys", keyGen.validateKeyGen, keyGenController.genLisenseKey);
 module.exports = router;
