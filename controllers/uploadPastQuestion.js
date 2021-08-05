@@ -13,6 +13,7 @@ exports.createPastQuestion = async (req, res, next) => {
       });
     }
     const { title, start, end } = req.body;
+    console.log(req.school);
     const pq = await pastQuestionDb.create({
       title: title,
       startYear: start,
@@ -20,6 +21,7 @@ exports.createPastQuestion = async (req, res, next) => {
       schoolId: req.school.id,
       facultyId: req.faculty.id,
       departmentId: req.department.id,
+      levelId: req.level.id,
       cloudId: req.fileId,
       cloudUri: req.uri,
     });

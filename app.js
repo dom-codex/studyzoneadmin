@@ -27,6 +27,7 @@ faculty.hasMany(department);
 school.hasMany(pq);
 faculty.hasMany(pq);
 department.hasMany(pq);
+level.hasMany(pq);
 department.hasMany(level);
 school.hasMany(level);
 faculty.hasMany(level);

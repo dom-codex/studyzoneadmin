@@ -2,6 +2,7 @@ const adminDb = require("../models/admin");
 const schoolDb = require("../models/school");
 const facultyDb = require("../models/faculty");
 const departmentDb = require("../models/department");
+const levelDb = require("../models/levels");
 const { Op } = require("sequelize");
 const multer = require("multer");
 const nanoid = require("nanoid").nanoid;
@@ -47,7 +48,7 @@ exports.uploadToCloud = async (req, res, next) => {
 exports.validateAdmin = async (req, res, next) => {
   try {
     console.log(req.body);
-    const { uid, email, sid, fid, did } = req.body;
+    const { lid, uid, email, sid, fid, did } = req.body;
     const admin = await adminDb.findOne({
       where: {
         [Op.and]: [{ email: email }, { uid: uid }],
@@ -55,8 +56,7 @@ exports.validateAdmin = async (req, res, next) => {
       excludes: ["password", "name"],
     });
     if (!admin) {
-      return deleteFile(
-        req.fileName,
+      return deleteFile(req.fileName, () =>
         res.status(404).json({
           code: 404,
           message: "account does not exist",
@@ -75,19 +75,24 @@ exports.validateAdmin = async (req, res, next) => {
       );
     }
     //validate school and faculty and department
-    const school = schoolDb.findOne({
+    const school = await schoolDb.findOne({
       where: {
         sid: sid,
       },
     });
-    const faculty = facultyDb.findOne({
+    const faculty = await facultyDb.findOne({
       where: {
         fid: fid,
       },
     });
-    const department = departmentDb.findOne({
+    const department = await departmentDb.findOne({
       where: {
         did: did,
+      },
+    });
+    const level = await levelDb.findOne({
+      where: {
+        lid: lid,
       },
     });
     if (!school) {
@@ -117,10 +122,20 @@ exports.validateAdmin = async (req, res, next) => {
         })
       );
     }
+    if (!level) {
+      return deleteFile(
+        req.fileName,
+        res.status(404).json({
+          code: 404,
+          message: "level not found",
+        })
+      );
+    }
     req.canCreate = true;
     req.school = school;
     req.faculty = faculty;
     req.department = department;
+    req.level = level;
     next();
   } catch (e) {
     console.log(e);
