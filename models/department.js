@@ -11,4 +11,8 @@ module.exports = sequelize.define("department", {
     type: Sequelize.STRING,
     allowNull: true,
   },
+  did: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4,
+  },
 });
