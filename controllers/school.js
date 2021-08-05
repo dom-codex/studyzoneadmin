@@ -1,6 +1,7 @@
 const schoolDb = require("../models/school");
 const facultyDb = require("../models/faculty");
 const departmentDb = require("../models/department");
+const levelDb = require("../models/levels");
 exports.createSchool = async (req, res, next) => {
   try {
     const canCreate = req.canCreate;
@@ -96,6 +97,39 @@ exports.createDepartment = async (req, res, next) => {
       },
     });
   } catch (e) {
+    res.status(500).json({
+      code: 500,
+      message: "an error occurred",
+    });
+  }
+};
+exports.createLevel = async (req, res, next) => {
+  try {
+    const { canCreate, school, admin, faculty, department } = req;
+    if (!canCreate) {
+      return res.status(400).json({
+        code: 400,
+        message: "cannot create level",
+      });
+    }
+    const newlevel = await levelDb.create({
+      level: req.body.level,
+      schoolId: school.id,
+      facultyId: faculty.id,
+      departmentId: department.id,
+      schoolId: school.id,
+      adminId: admin.id,
+    });
+    res.status(200).json({
+      code: 200,
+      message: "successful",
+      data: {
+        level: req.body.level,
+        lid: newlevel.lid,
+      },
+    });
+  } catch (e) {
+    console.log(e);
     res.status(500).json({
       code: 500,
       message: "an error occurred",

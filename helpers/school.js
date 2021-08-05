@@ -2,6 +2,7 @@ const adminDb = require("../models/admin");
 const schoolDb = require("../models/school");
 const { Op } = require("sequelize");
 const facultyDb = require("../models/faculty");
+const departmentDb = require("../models/department");
 const validateProcess = (admin, school) => {
   if (!admin) {
     return {
@@ -39,30 +40,6 @@ const validateProcess = (admin, school) => {
 };
 exports.validateSchoolCreationDetails = async (req, res, next) => {
   //validate name,
-  /*const admin = await adminDb.findOne({
-    where: {
-      [Op.and]: [{ email: email }, { uid: uid }],
-    },
-    excludes: ["password"],
-  });
-  /*if (!admin) {
-    return res.status(404).json({
-      code: 404,
-      message: "invalid email",
-    });
-  }
-  if (admin.role != "MASTER" && admin.role != "EDITOR") {
-    return res.status(400).json({
-      code: 400,
-      message: "you do not have the permission for this operation",
-    });
-  }
-  if (!admin.isVerfied && !admin.loggedIn) {
-    return res.status(401).json({
-      code: 401,
-      message: "account not verified",
-    });
-  }*/
   const { email, uid, name } = req.body;
 
   const admin = await adminDb.findOne({
@@ -172,5 +149,74 @@ exports.validateDepartmentCredentials = async (req, res, next) => {
   } catch (e) {
     console.log(e);
     res.status(500).json({ code: 500, message: "an error occurred" });
+  }
+};
+exports.validateLevelCredentials = async (req, res, next) => {
+  try {
+    const { email, uid, sid, fid, did } = req.body; //validate admin
+    const admin = await adminDb.findOne({
+      where: {
+        [Op.and]: [{ email: email }, { uid: uid }],
+      },
+      attributes: ["id", "email", "uid", "role"],
+    });
+    if (!admin) {
+      return res.status(404).json({
+        code: 404,
+        message: "admin not found",
+      });
+    }
+    if (admin.role != "MASTER") {
+      return res.status(404).json({
+        code: 404,
+        message: "you dont have the permission",
+      });
+    }
+    //validate school
+    const school = await schoolDb.findOne({
+      where: {
+        sid: sid,
+      },
+    });
+    if (!school) {
+      return res.status(404).json({
+        code: 404,
+        message: "school not found",
+      });
+    }
+    //validate faculty
+    const faculty = await facultyDb.findOne({
+      where: { fid: fid },
+    });
+    if (!faculty) {
+      return res.status(404).json({
+        code: 404,
+        message: "faculty not found",
+      });
+    }
+    //validate department
+    const department = await departmentDb.findOne({
+      where: {
+        did: did,
+      },
+    });
+    if (!department) {
+      return res.status(404).json({
+        code: 404,
+        message: "department does not exist",
+      });
+    }
+    req.canCreate = true;
+    req.admin = admin;
+    req.school = school;
+    req.faculty = faculty;
+    req.department = department;
+    next();
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      code: 500,
+      message: "an error occured",
+    });
   }
 };

@@ -8,6 +8,7 @@ const admin = require("./models/admin");
 const school = require("./models/school");
 const faculty = require("./models/faculty");
 const department = require("./models/department");
+const level = require("./models/levels");
 const pq = require("./models/pastQuestion");
 //custom imports
 const authRoute = require("./routes/auth");
@@ -26,6 +27,10 @@ faculty.hasMany(department);
 school.hasMany(pq);
 faculty.hasMany(pq);
 department.hasMany(pq);
+department.hasMany(level);
+school.hasMany(level);
+faculty.hasMany(level);
+
 sequelize.sync({ alter: true }).then(() => {
   server.listen(4500);
   console.log("listening...");

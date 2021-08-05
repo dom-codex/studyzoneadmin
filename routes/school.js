@@ -28,4 +28,9 @@ router.post(
   uploadHelper.validateAdmin,
   uploadController.createPastQuestion
 );
+router.post(
+  "/level",
+  schoolHelper.validateLevelCredentials,
+  schoolController.createLevel
+);
 module.exports = router;
