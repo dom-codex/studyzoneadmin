@@ -12,10 +12,10 @@ const faculty = require("./models/faculty");
 const department = require("./models/department");
 const level = require("./models/levels");
 const pq = require("./models/pastQuestion");
-const user = require("./models/user");
 const lisenseKey = require("./models/lisenseKey");
 const withDrawalRequest = require("./models/withDrawalRequest");
 const utils = require("./models/utils");
+const pricing = require("./models/pricing");
 //custom imports
 const authRoute = require("./routes/auth");
 const schoolRoute = require("./routes/school");
@@ -53,6 +53,10 @@ level.hasMany(pq);
 department.hasMany(level);
 school.hasMany(level);
 faculty.hasMany(level);
+level.hasMany(pricing);
+department.hasMany(pricing);
+faculty.hasMany(pricing);
+school.hasMany(pricing);
 //user.hasMany(lisenseKey);
 //user.hasMany(withDrawalRequest);
 //change price for pq db to non null

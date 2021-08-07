@@ -1,4 +1,4 @@
-const pastQuestionDb = require("../models/pastQuestion");
+const pricing = require("../models/pricing");
 const fs = require("fs");
 exports.createPastQuestion = async (req, res, next) => {
   try {
@@ -24,9 +24,9 @@ exports.createPastQuestion = async (req, res, next) => {
       levelId: req.level.id,
       cloudId: req.fileId,
       cloudUri: req.uri,
-      price: price,
       semester: semester,
     });
+    //create pricing entry
     const fileName = req.fileName;
     fs.unlink(`./uploads/${fileName}`, (e) => {
       res.status(200).json({
