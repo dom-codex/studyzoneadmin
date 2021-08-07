@@ -34,4 +34,13 @@ module.exports = sequelize.define("pastquestion", {
     type: Sequelize.INTEGER,
     defaultValue: 0,
   },
+  semester: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    defaultValue: "first",
+  },
+  sales: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
 });
