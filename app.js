@@ -37,6 +37,7 @@ department.hasMany(level);
 school.hasMany(level);
 faculty.hasMany(level);
 user.hasMany(keys);
+//change price for pq db to non null
 sequelize.sync({ alter: true }).then(async () => {
   await userdb.sync();
   server.listen(4500);

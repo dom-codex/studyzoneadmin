@@ -12,7 +12,7 @@ exports.createPastQuestion = async (req, res, next) => {
         });
       });
     }
-    const { title, start, end } = req.body;
+    const { title, start, end, price } = req.body;
     console.log(req.school);
     const pq = await pastQuestionDb.create({
       title: title,
@@ -24,6 +24,7 @@ exports.createPastQuestion = async (req, res, next) => {
       levelId: req.level.id,
       cloudId: req.fileId,
       cloudUri: req.uri,
+      price: price,
     });
     const fileName = req.fileName;
     fs.unlink(`./uploads/${fileName}`, (e) => {

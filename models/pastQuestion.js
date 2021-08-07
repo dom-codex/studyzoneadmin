@@ -30,4 +30,8 @@ module.exports = sequelize.define("pastquestion", {
   cloudUri: {
     type: Sequelize.STRING,
   },
+  price: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
 });
