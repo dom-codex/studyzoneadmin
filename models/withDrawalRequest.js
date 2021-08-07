@@ -16,4 +16,10 @@ module.exports = sequelize.define("withdrawalRequest", {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false,
   },
+  requestedBy: {
+    type: Sequelize.UUID,
+  },
+  requesteeName: {
+    type: Sequelize.STRING,
+  },
 });

@@ -19,4 +19,7 @@ module.exports = sequelize.define("lisenseKeys", {
     type: Sequelize.FLOAT,
     allowNull: false,
   },
+  usedBy: {
+    type: Sequelize.UUID,
+  },
 });
