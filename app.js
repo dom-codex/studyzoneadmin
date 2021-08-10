@@ -14,12 +14,16 @@ const level = require("./models/levels");
 const pq = require("./models/pastQuestion");
 const lisenseKey = require("./models/lisenseKey");
 const withDrawalRequest = require("./models/withDrawalRequest");
+const transaction = require("./models/transaction");
 const utils = require("./models/utils");
 const pricing = require("./models/pricing");
 //custom imports
 const authRoute = require("./routes/auth");
 const schoolRoute = require("./routes/school");
 const withdrawRoute = require("./routes/withdrawal");
+const validationRoute = require("./routes/validations");
+const updateRoute = require("./routes/update");
+const downloadRoute = require("./routes/download");
 const app = express();
 const server = http.createServer(app);
 app.use(cors);
@@ -41,6 +45,9 @@ app.use(async (req, res, next) => {
 app.use("/auth", authRoute);
 app.use("/create", schoolRoute);
 app.use("/withdrawal", withdrawRoute);
+app.use("/validate", validationRoute);
+app.use("/update", updateRoute);
+app.use("/download", downloadRoute);
 admin.hasMany(lisenseKey);
 //admin.hasMany(school);
 school.hasMany(faculty);
@@ -51,20 +58,26 @@ faculty.hasMany(pq);
 department.hasMany(pq);
 level.hasMany(pq);
 department.hasMany(level);
+level.belongsTo(department);
 school.hasMany(level);
+level.belongsTo(school);
 faculty.hasMany(level);
+level.belongsTo(faculty);
 level.hasMany(pricing);
 department.hasMany(pricing);
 faculty.hasMany(pricing);
 school.hasMany(pricing);
+school.hasMany(transaction);
+faculty.hasMany(transaction);
+department.hasMany(transaction);
+level.hasMany(transaction);
 //user.hasMany(lisenseKey);
 //user.hasMany(withDrawalRequest);
 //change price for pq db to non null
 //change sales for pq db to non null
 //change sales for userId db to non null
+//change isUser for keys db to non null
 sequelize.sync({ alter: true }).then(async () => {
-  userdb.sync().then(() => {
-    server.listen(4500);
-    console.log("listening...");
-  });
+  server.listen(4500);
+  console.log("listening...");
 });

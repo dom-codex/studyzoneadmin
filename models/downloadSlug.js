@@ -1,29 +1,33 @@
 const sequelize = require("../utils/database");
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("lisenseKeys", {
+module.exports = sequelize.define("downloadSlugs", {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    allowNull: false,
     autoIncrement: true,
+    allowNull: false,
   },
-  key: {
+  slug: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  forWhom: {
+  deviceId: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  worth: {
-    type: Sequelize.FLOAT,
+  user: {
+    type: Sequelize.STRING,
     allowNull: false,
   },
-  usedBy: {
-    type: Sequelize.UUID,
+  email: {
+    type: Sequelize.STRING,
+    allowNull: false,
   },
-  isUsed: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
+  pastQuestionId: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  trId: {
+    type: Sequelize.STRING,
   },
 });
