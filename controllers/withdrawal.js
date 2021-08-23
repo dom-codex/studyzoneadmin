@@ -1,7 +1,7 @@
 const withDrawalRequestDb = require("../models/withDrawalRequest");
 exports.processWithDrawal = async (req, res, next) => {
   try {
-    const { userName, uid, canProceed } = req;
+    const { userName, uid, userEmail, canProceed } = req;
     if (!canProceed) {
       return res.status(404).json({
         code: 400,
@@ -14,6 +14,7 @@ exports.processWithDrawal = async (req, res, next) => {
       amount: amount,
       requestedBy: uid,
       requesteeName: userName,
+      requesteeEmail: userEmail,
     });
     //send notification to admin
     res.status(200).json({

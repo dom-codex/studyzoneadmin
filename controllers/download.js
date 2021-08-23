@@ -89,7 +89,7 @@ exports.createSlug = async (req, res, next) => {
         deviceId: deviceId,
         user: uid,
         email: email,
-        pastQuestionId: pq[i].pid,
+        pastquestionId: pq[i].id,
         trId: ref,
       };
       slugs.push(downloadData);

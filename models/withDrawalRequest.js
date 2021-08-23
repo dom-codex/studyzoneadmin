@@ -22,4 +22,11 @@ module.exports = sequelize.define("withdrawalRequest", {
   requesteeName: {
     type: Sequelize.STRING,
   },
+  attendedTo: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
+  requesteeEmail: {
+    type: Sequelize.STRING,
+  },
 });

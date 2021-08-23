@@ -2,7 +2,7 @@ const userDb = require("../models/user");
 const utilsDb = require("../models/utils");
 exports.validateWithdrawal = async (req, res, next) => {
   try {
-    const { user, name } = req.body;
+    const { user, name, email } = req.body;
     //validate user
     /*const oldUser = await userDb.findOne({
       where: {
@@ -47,6 +47,7 @@ exports.validateWithdrawal = async (req, res, next) => {
     }
     req.canProceed = true;
     (req.userName = name), (req.uid = user);
+    req.userEmail = email;
     //req.user = oldUser;
     next();
   } catch (e) {

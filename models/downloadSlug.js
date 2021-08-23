@@ -23,10 +23,6 @@ module.exports = sequelize.define("downloadSlugs", {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  pastQuestionId: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
   trId: {
     type: Sequelize.STRING,
   },

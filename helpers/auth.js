@@ -6,7 +6,7 @@ exports.validateUserSignUp = async (req, res, next) => {
     const { email } = req.body;
     //check for non existence of email
     const admin = await adminDb.findOne({
-      where: { [Op.or]: [{ email: email }, { role: "MASTER" }] },
+      where: { [Op.or]: [{ email: email }] },
       attribute: ["id", "email"],
     });
     if (admin) {
@@ -31,7 +31,7 @@ exports.validateLoginDetails = async (req, res, next) => {
     const { email, role, password } = req.body;
     //check for existence of the acccount
     const admin = await adminDb.findOne({
-      where: { [Op.and]: [{ email: email, role: role }] },
+      where: { [Op.and]: [{ email: email }] },
     });
     if (!admin) {
       return res.status(404).json({
@@ -40,7 +40,7 @@ exports.validateLoginDetails = async (req, res, next) => {
       });
     }
     if (!admin.isVerified) {
-      return res.status(400).json({
+      return res.status(401).json({
         code: 400,
         message: " account not verified",
       });

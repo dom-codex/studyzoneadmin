@@ -1,4 +1,5 @@
 const pricing = require("../models/pricing");
+const pastQuestionDb = require("../models/pastQuestion");
 const fs = require("fs");
 exports.createPastQuestion = async (req, res, next) => {
   try {

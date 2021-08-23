@@ -50,6 +50,10 @@ exports.login = async (req, res, next) => {
   admin.loggedIn = true;
   res.status(200).json({
     code: 200,
+    email: admin.email,
+    role: admin.role,
+    adminId: admin.uid,
+    loggedIn: admin.loggedIn,
     message: "logged in",
   });
 };

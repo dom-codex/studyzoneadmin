@@ -24,6 +24,10 @@ const withdrawRoute = require("./routes/withdrawal");
 const validationRoute = require("./routes/validations");
 const updateRoute = require("./routes/update");
 const downloadRoute = require("./routes/download");
+const getRoute = require("./routes/getRoute");
+const schoolDeleteRoute = require("./routes/schoolDeleteRoute");
+const pastQuestion = require("./models/pastQuestion");
+const downloadSlug = require("./models/downloadSlug");
 const app = express();
 const server = http.createServer(app);
 app.use(cors);
@@ -48,6 +52,8 @@ app.use("/withdrawal", withdrawRoute);
 app.use("/validate", validationRoute);
 app.use("/update", updateRoute);
 app.use("/download", downloadRoute);
+app.use("/get", getRoute);
+app.use("/delete", schoolDeleteRoute);
 admin.hasMany(lisenseKey);
 //admin.hasMany(school);
 school.hasMany(faculty);
@@ -68,16 +74,22 @@ department.hasMany(pricing);
 faculty.hasMany(pricing);
 school.hasMany(pricing);
 school.hasMany(transaction);
+transaction.belongsTo(school);
 faculty.hasMany(transaction);
+transaction.belongsTo(faculty);
 department.hasMany(transaction);
+transaction.belongsTo(department);
 level.hasMany(transaction);
+transaction.belongsTo(level);
+pastQuestion.hasMany(downloadSlug);
+downloadSlug.belongsTo(pastQuestion);
 //user.hasMany(lisenseKey);
 //user.hasMany(withDrawalRequest);
 //change price for pq db to non null
 //change sales for pq db to non null
 //change sales for userId db to non null
 //change isUser for keys db to non null
-sequelize.sync({ alter: true }).then(async () => {
+sequelize.sync({ alter: true }).then(() => {
   server.listen(4500);
   console.log("listening...");
 });

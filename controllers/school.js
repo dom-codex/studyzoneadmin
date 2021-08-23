@@ -26,7 +26,9 @@ exports.createSchool = async (req, res, next) => {
         name: school.name,
         type: type,
         nameAbbr: nameAbbr,
-        icon: icon,
+        icon: "",
+        sid: school.sid,
+        createdAt: school.createdAt,
       },
     });
   } catch (e) {
@@ -127,6 +129,36 @@ exports.createLevel = async (req, res, next) => {
         level: req.body.level,
         lid: newlevel.lid,
       },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      code: 500,
+      message: "an error occurred",
+    });
+  }
+};
+exports.deleteSchool = async (req, res, next) => {
+  try {
+    const { canProceed, admin } = req;
+    const {
+      school: { sid, name },
+    } = req.body;
+    if (!canProceed) {
+      return res.json({
+        code: 404,
+        message: "invalid credentials",
+      });
+    }
+    await schoolDb.destroy({
+      where: {
+        sid: sid,
+        name: name,
+      },
+    });
+    res.status(200).json({
+      code: 200,
+      message: "deleted successfully",
     });
   } catch (e) {
     console.log(e);

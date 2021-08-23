@@ -56,23 +56,22 @@ exports.validateAdmin = async (req, res, next) => {
       excludes: ["password", "name"],
     });
     if (!admin) {
-      return deleteFile(req.fileName, () =>
+      return deleteFile(req.fileName, () => {
         res.status(404).json({
           code: 404,
           message: "account does not exist",
           action: "logout",
-        })
-      );
+        });
+      });
     }
     //check if admin has the permission
     if (admin.role != "MASTER") {
-      return deleteFile(
-        req.fileName,
+      return deleteFile(req.fileName, () => {
         res.status(400).json({
           code: 400,
           message: "you do not the required permission",
-        })
-      );
+        });
+      });
     }
     //validate school and faculty and department
     const school = await schoolDb.findOne({
@@ -96,17 +95,15 @@ exports.validateAdmin = async (req, res, next) => {
       },
     });
     if (!school) {
-      return deleteFile(
-        req.fileName,
+      return deleteFile(req.fileName, () => {
         res.status(404).json({
           code: 404,
           message: "school not found",
-        })
-      );
+        });
+      });
     }
     if (!faculty) {
-      return deleteFile(
-        req.fileName,
+      return deleteFile(req.fileName, () =>
         res.status(404).json({
           code: 404,
           message: "faculty not found",
@@ -114,8 +111,7 @@ exports.validateAdmin = async (req, res, next) => {
       );
     }
     if (!department) {
-      return deleteFile(
-        req.fileName,
+      return deleteFile(req.fileName, () =>
         res.status(404).json({
           code: 404,
           message: "department not found",
@@ -123,8 +119,7 @@ exports.validateAdmin = async (req, res, next) => {
       );
     }
     if (!level) {
-      return deleteFile(
-        req.fileName,
+      return deleteFile(req.fileName, () =>
         res.status(404).json({
           code: 404,
           message: "level not found",
