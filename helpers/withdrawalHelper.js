@@ -1,8 +1,26 @@
-const userDb = require("../models/user");
 const utilsDb = require("../models/utils");
+const withdrawalDb = require("../models/withDrawalRequest");
+const { Op } = require("sequelize");
 exports.validateWithdrawal = async (req, res, next) => {
   try {
-    const { user, name, email } = req.body;
+    const { user, name, email, amount } = req.body;
+    const hasPendingRequest = await withdrawalDb.findOne({
+      where: {
+        [Op.and]: [
+          {
+            requestedBy: user,
+          },
+          { status: "PENDING" },
+          { attendedTo: false },
+        ],
+      },
+    });
+    if (hasPendingRequest) {
+      return res.json({
+        code: 401,
+        message: "you still have a pending request awaiting review",
+      });
+    }
     //validate user
     /*const oldUser = await userDb.findOne({
       where: {
@@ -17,7 +35,6 @@ exports.validateWithdrawal = async (req, res, next) => {
         message: "user not found",
       });
     }*/
-    const { amount } = req.body;
     //validate amount
     const minWithdrawal = await utilsDb.findOne({
       where: {
@@ -30,8 +47,8 @@ exports.validateWithdrawal = async (req, res, next) => {
       },
     });
     if (!minWithdrawal && !maxWithdrawal) {
-      return res.status(500).json({
-        code: 500,
+      return res.json({
+        code: 400,
         message: "an error occured please contact support",
       });
     }
@@ -40,13 +57,17 @@ exports.validateWithdrawal = async (req, res, next) => {
     const maxAmt = parseInt(maxWithdrawal.value);
     //validate amount
     if (amount < minAmt || amount > maxAmt) {
-      return res.status(403).json({
+      return res.json({
         code: 403,
-        message: "invalid amount,try again",
+        message:
+          amount < minAmt
+            ? `Amount too small,should be greater than ${minAmt}`
+            : `Amount to large should be lesser than ${maxAmt}`,
       });
     }
     req.canProceed = true;
-    (req.userName = name), (req.uid = user);
+    req.userName = name;
+    req.uid = user;
     req.userEmail = email;
     //req.user = oldUser;
     next();

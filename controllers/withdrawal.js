@@ -3,7 +3,7 @@ exports.processWithDrawal = async (req, res, next) => {
   try {
     const { userName, uid, userEmail, canProceed } = req;
     if (!canProceed) {
-      return res.status(404).json({
+      return res.json({
         code: 400,
         message: "an error occurred, try again",
       });

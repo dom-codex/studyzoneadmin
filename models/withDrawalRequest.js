@@ -17,7 +17,7 @@ module.exports = sequelize.define("withdrawalRequest", {
     allowNull: false,
   },
   requestedBy: {
-    type: Sequelize.UUID,
+    type: Sequelize.STRING,
   },
   requesteeName: {
     type: Sequelize.STRING,
@@ -28,5 +28,9 @@ module.exports = sequelize.define("withdrawalRequest", {
   },
   requesteeEmail: {
     type: Sequelize.STRING,
+  },
+  status: {
+    type: Sequelize.STRING,
+    defaultValue: "PENDING",
   },
 });

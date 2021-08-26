@@ -17,6 +17,7 @@ const withDrawalRequest = require("./models/withDrawalRequest");
 const transaction = require("./models/transaction");
 const utils = require("./models/utils");
 const pricing = require("./models/pricing");
+const testimony = require("./models/testimony");
 //custom imports
 const authRoute = require("./routes/auth");
 const schoolRoute = require("./routes/school");
@@ -26,10 +27,12 @@ const updateRoute = require("./routes/update");
 const downloadRoute = require("./routes/download");
 const getRoute = require("./routes/getRoute");
 const schoolDeleteRoute = require("./routes/schoolDeleteRoute");
+const testimonyRoute = require("./routes/testimony");
 const pastQuestion = require("./models/pastQuestion");
 const downloadSlug = require("./models/downloadSlug");
 const app = express();
 const server = http.createServer(app);
+
 app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -54,6 +57,7 @@ app.use("/update", updateRoute);
 app.use("/download", downloadRoute);
 app.use("/get", getRoute);
 app.use("/delete", schoolDeleteRoute);
+app.use("/testimony", testimonyRoute);
 admin.hasMany(lisenseKey);
 //admin.hasMany(school);
 school.hasMany(faculty);
