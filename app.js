@@ -4,6 +4,7 @@ const path = require("path");
 //core impor
 const cors = require("./utils/cors");
 const sequelize = require("./utils/database");
+const bcrypt = require("bcrypt")
 const userdb = require("./utils/userDatabase");
 const io = require("./socket");
 //MODELS IMPORT
