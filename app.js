@@ -104,7 +104,7 @@ downloadSlug.belongsTo(pastQuestion);
 //change sales for userId db to non null
 //change isUser for keys db to non null
 sequelize.sync().then(() => {
-  server.listen(4500);
+  server.listen(process.env.PORT!=null?process.env.PORT:4500);
  io.init(server);
 
   console.log("listening...");
