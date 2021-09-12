@@ -57,7 +57,7 @@ app.use(async (req, res, next) => {
       email:"test@test.com",
       password:hash,
       isVerified:true,
-      LoggedIn:true
+      loggedIn:true
     })
     const util = [
       { name: "minWithdrawal", value: "200" },
