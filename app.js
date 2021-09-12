@@ -49,6 +49,8 @@ app.use(async (req, res, next) => {
       email:"test@test.com"
     }
   })
+  ad.isVerified = true
+  await ad.save()
   if(!ad){
     const hash = await bcrypt.hash("password",12)
     await admin.create({
