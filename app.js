@@ -56,7 +56,8 @@ app.use(async (req, res, next) => {
       role:"MASTER",
       email:"test@test.com",
       password:hash,
-      isVerified:true
+      isVerified:true,
+      isLoggedIn:true
     })
     const util = [
       { name: "minWithdrawal", value: "200" },
