@@ -5,7 +5,7 @@ const sequelize = require("sequelize");
 const compileData = require("../../utility/compileFacultyData");
 module.exports = async (req, res, next) => {
   try {
-    const limit = 10;
+    const limit = 1;
     const { page } = req.query;
     const { school, canProceed } = req;
     if (!canProceed) {
@@ -16,12 +16,12 @@ module.exports = async (req, res, next) => {
     }
     //fetch faculties
     const faculties = await facultyDb.findAll({
-      limit: 10,
+      limit:limit,
       offset: page * limit,
       where: {
         schoolId: school.id,
       },
-      attributes: ["id", "name", "fid", "createdAt"],
+      attributes: ["id", "name", "fid", "abbr", "createdAt"],
     });
     //extract ids
     const facultyIds = extractIds(faculties);

@@ -65,11 +65,11 @@ exports.validateSchoolCreationDetails = async (req, res, next) => {
   next();
 };
 exports.validateFacultyDetails = async (req, res, next) => {
-  const { email, uid } = req.body;
+  const { uid } = req.body;
 
   const admin = await adminDb.findOne({
     where: {
-      [Op.and]: [{ email: email }, { uid: uid }],
+      uid: uid
     },
     excludes: ["password"],
   });
@@ -99,11 +99,11 @@ exports.validateFacultyDetails = async (req, res, next) => {
 };
 exports.validateDepartmentCredentials = async (req, res, next) => {
   try {
-    const { email, uid, fid } = req.body;
+    const { uid, fid } = req.body;
 
     const admin = await adminDb.findOne({
       where: {
-        [Op.and]: [{ email: email }, { uid: uid }],
+       uid: uid 
       },
       excludes: ["password"],
     });
@@ -153,10 +153,10 @@ exports.validateDepartmentCredentials = async (req, res, next) => {
 };
 exports.validateLevelCredentials = async (req, res, next) => {
   try {
-    const { email, uid, sid, fid, did } = req.body; //validate admin
+    const { uid, sid, fid, did } = req.body; //validate admin
     const admin = await adminDb.findOne({
       where: {
-        [Op.and]: [{ email: email }, { uid: uid }],
+        uid: uid,
       },
       attributes: ["id", "email", "uid", "role"],
     });
@@ -177,6 +177,7 @@ exports.validateLevelCredentials = async (req, res, next) => {
       where: {
         sid: sid,
       },
+      attributes: ["sid", "id"],
     });
     if (!school) {
       return res.status(404).json({
@@ -187,6 +188,7 @@ exports.validateLevelCredentials = async (req, res, next) => {
     //validate faculty
     const faculty = await facultyDb.findOne({
       where: { fid: fid },
+      attributes: ["fid", "id"],
     });
     if (!faculty) {
       return res.status(404).json({
@@ -199,6 +201,7 @@ exports.validateLevelCredentials = async (req, res, next) => {
       where: {
         did: did,
       },
+      attributes: ["did", "id"],
     });
     if (!department) {
       return res.status(404).json({

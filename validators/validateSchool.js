@@ -29,3 +29,26 @@ exports.validateSchool = async (req, res, next) => {
     res.status(500);
   }
 };
+exports.validateSchoolForUserRequest = async (req, res, next) => {
+  try {
+    const { sch } = req.query;
+    const school = await schoolDb.findOne({
+      where: {
+        sid: sch,
+      },
+      attributes: ["id", "sid"],
+    });
+    if (!school) {
+      return res.status(404).json({
+        message: "school does not exist",
+        code: 400,
+      });
+    }
+    req.school = school;
+    req.canProceed = true;
+    next();
+  } catch (e) {
+    console.log(e);
+    res.status(500);
+  }
+};

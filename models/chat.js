@@ -1,41 +1,38 @@
 const sequelize = require("../utils/database");
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("pastquestion", {
+module.exports = sequelize.define("chat", {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
-    allowNull: false,
-  },
-  fileName: {
-    type: Sequelize.STRING,
-  },
-  title: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  startYear: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  endYear: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  pid: {
-    type: Sequelize.UUID,
     allowNull: true,
-    defaultValue: Sequelize.UUIDV4,
+    autoIncrement: true,
   },
-  cloudId: {
+  message: {
+    type: Sequelize.STRING(100000),
+    allowNull: false,
+  },
+  time: {
     type: Sequelize.STRING,
   },
-  cloudUri: {
-    type: Sequelize.STRING,
-  },
-  semester: {
+  sender: {
     type: Sequelize.STRING,
     allowNull: false,
-    defaultValue: "first",
+  },
+  mediaName: {
+    type: Sequelize.STRING,
+  },
+  mediaUrl: {
+    type: Sequelize.STRING,
+  },
+  chatId: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4(),
+  },
+  group: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  messageType: {
+    type: Sequelize.STRING,
   },
 });

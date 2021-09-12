@@ -6,6 +6,54 @@ const facDb = require("../models/faculty");
 const deptDb = require("../models/department");
 const nanoid = require("nanoid").nanoid;
 const { Op } = require("sequelize");
+const validateFullSchool = require("../utility/validateFullSchool");
+exports.getOnePastQuestionForDownload = async (req, res, next) => {
+  try {
+    const {
+      school,
+      faculty,
+      department,
+      level,
+      isValid,
+    } = await validateFullSchool(req);
+    const { sem } = req.body;
+    if (!isValid) {
+      return res.status(404).json({
+        code: 404,
+        message: "invalid school details",
+      });
+    }
+    const {pid} = req.body
+    const pastquestion = await pastQuestiondDb.findOne({
+      where: {
+        [Op.and]: [
+          {
+            schoolId: school.id,
+          },
+          { facultyId: faculty.id },
+          { departmentId: department.id },
+          { levelId: level.id },
+          { semester: sem },
+          {pid:pid}
+        ],
+      },
+      attributes: ["fileName", "pid"],
+    });
+    if (!pastquestion) {
+      return res.status(404).json({
+        code: 404,
+        message: "no pastquestion available for download",
+      });
+    }
+    res.status(200).json({
+      code: 200,
+      pastquestion,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
+  }
+};
 exports.createSlug = async (req, res, next) => {
   try {
     const { uid, email, deviceId, sch, fac, dept, lev, ref } = req.body;

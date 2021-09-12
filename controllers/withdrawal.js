@@ -29,3 +29,35 @@ exports.processWithDrawal = async (req, res, next) => {
     });
   }
 };
+exports.processWithDrawalRequestStatus = async (req, res, next) => {
+  try {
+    //continue by updating the payment status
+    const { canProceed } = req;
+    if (!canProceed) {
+      return res.status(404).json({
+        code: 404,
+        message: "admin not found",
+      });
+    }
+    const { status, withdrawalHash } = req.body;
+    const updated = await withDrawalRequestDb.update(
+      {
+        status: status,
+      },
+      {
+        where: {
+          wid: withdrawalHash,
+        },
+      }
+    );
+    return res.status(200).json({
+      code: 200,
+      message: "update",
+      withdrawalId: withdrawalHash,
+      status: status,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
+  }
+};

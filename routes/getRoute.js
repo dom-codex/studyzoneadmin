@@ -24,6 +24,7 @@ router.get(
   validators.validateAdminOnGetRequest,
   userController.fetchUsers
 );
+const pastQuestionController = require("../controllers/pastquestion");
 router.get(
   "/school/faculty",
   validators.validateAdminOnGetRequest,
@@ -79,4 +80,9 @@ router.get(
   validators.validateAdminOnGetRequest,
   userDownloadsController
 );
+router.post(
+  "/pastquestion/amount",
+  pastQuestionController.getPastQuestionsPrice
+);
+router.get("/freetrial/status",getController.checkForFreeTrialStatus)
 module.exports = router;

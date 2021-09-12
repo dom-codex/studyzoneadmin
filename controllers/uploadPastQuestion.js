@@ -13,7 +13,7 @@ exports.createPastQuestion = async (req, res, next) => {
         });
       });
     }
-    const { title, start, end, price, semester } = req.body;
+    const { title, start, end, semester } = JSON.parse(req.body.data);
 
     const pq = await pastQuestionDb.create({
       title: title,
@@ -25,6 +25,7 @@ exports.createPastQuestion = async (req, res, next) => {
       levelId: req.level.id,
       cloudId: req.fileId,
       cloudUri: req.uri,
+      fileName: req.fileName,
       semester: semester,
     });
     //create pricing entry
@@ -38,9 +39,7 @@ exports.createPastQuestion = async (req, res, next) => {
           start,
           end,
           pid: pq.pid,
-          sid: req.school.sid,
-          fid: req.faculty.fid,
-          did: req.department.did,
+          createdAt: pq.createdAt,
         },
       });
     });

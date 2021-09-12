@@ -1,7 +1,7 @@
 const validateSchool = require("../utility/validateFullSchool");
 const transactionDb = require("../models/transaction");
-const keysDb = require("../models/lisenseKey");
-const { Op } = require("sequelize");
+const pricingDb = require("../models/pricing");
+const sequelize = require("sequelize");
 exports.createTransaction = async (req, res, next) => {
   try {
     const {
@@ -10,7 +10,6 @@ exports.createTransaction = async (req, res, next) => {
       trf,
       title,
       email,
-      time,
       semester,
       paymentMethod,
       userTxId,
@@ -18,7 +17,7 @@ exports.createTransaction = async (req, res, next) => {
     } = req.body;
     const result = await validateSchool(req);
     if (!result.isValid) {
-      return res.status(400).json({
+      return res.json({
         code: 400,
         message: result.message,
       });
@@ -40,6 +39,21 @@ exports.createTransaction = async (req, res, next) => {
       userTxId: userTxId,
       key: key,
     });
+    //update sales
+    await pricingDb.update(
+      { price: sequelize.literal("sales + 1") },
+      {
+        where: {
+          [sequelize.Op.and]: [
+            { schoolId: school.id },
+            { facultyId: faculty.id },
+            { departmentId: department.id },
+            { levelId: level.id },
+            { semester: semester },
+          ],
+        },
+      }
+    );
     res.status(200).json({
       code: 200,
       message: "transaction created",

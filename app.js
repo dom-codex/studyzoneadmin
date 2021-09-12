@@ -1,10 +1,11 @@
 const http = require("http");
 const express = require("express");
+const path = require("path");
 //core impor
 const cors = require("./utils/cors");
 const sequelize = require("./utils/database");
 const userdb = require("./utils/userDatabase");
-
+const io = require("./socket");
 //MODELS IMPORT
 const admin = require("./models/admin");
 const school = require("./models/school");
@@ -18,6 +19,7 @@ const transaction = require("./models/transaction");
 const utils = require("./models/utils");
 const pricing = require("./models/pricing");
 const testimony = require("./models/testimony");
+const notification = require("./models/notification")
 //custom imports
 const authRoute = require("./routes/auth");
 const schoolRoute = require("./routes/school");
@@ -27,9 +29,13 @@ const updateRoute = require("./routes/update");
 const downloadRoute = require("./routes/download");
 const getRoute = require("./routes/getRoute");
 const schoolDeleteRoute = require("./routes/schoolDeleteRoute");
+const notificationRoute = require("./routes/notification");
 const testimonyRoute = require("./routes/testimony");
 const pastQuestion = require("./models/pastQuestion");
 const downloadSlug = require("./models/downloadSlug");
+const userRoute = require("./routes/userroutes");
+const chatRoute = require("./routes/chat");
+const settingsRoute = require("./routes/settings");
 const app = express();
 const server = http.createServer(app);
 
@@ -58,6 +64,10 @@ app.use("/download", downloadRoute);
 app.use("/get", getRoute);
 app.use("/delete", schoolDeleteRoute);
 app.use("/testimony", testimonyRoute);
+app.use("/user", userRoute);
+app.use("/notification", notificationRoute);
+app.use("/chat", chatRoute);
+app.use("/settings", settingsRoute);
 admin.hasMany(lisenseKey);
 //admin.hasMany(school);
 school.hasMany(faculty);
@@ -93,7 +103,9 @@ downloadSlug.belongsTo(pastQuestion);
 //change sales for pq db to non null
 //change sales for userId db to non null
 //change isUser for keys db to non null
-sequelize.sync({ alter: true }).then(() => {
+sequelize.sync().then(() => {
   server.listen(4500);
+ io.init(server);
+
   console.log("listening...");
 });

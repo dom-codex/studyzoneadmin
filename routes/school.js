@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
 //controller and helper
 const schoolController = require("../controllers/school");
 const schoolHelper = require("../helpers/school");
@@ -9,6 +8,7 @@ const uploadController = require("../controllers/uploadPastQuestion");
 const keyGen = require("../helpers/keyGen");
 const keyGenController = require("../controllers/lisenseKey");
 const transactionController = require("../controllers/transaction");
+
 router.post(
   "/school",
   schoolHelper.validateSchoolCreationDetails,
@@ -27,8 +27,8 @@ router.post(
 router.post(
   "/pq",
   uploadHelper.upload,
-  uploadHelper.uploadToCloud,
   uploadHelper.validateAdmin,
+  uploadHelper.uploadToCloud,
   uploadController.createPastQuestion
 );
 router.post(
@@ -38,4 +38,5 @@ router.post(
 );
 router.post("/keys", keyGen.validateKeyGen, keyGenController.genLisenseKey);
 router.post("/transaction", transactionController.createTransaction);
+
 module.exports = router;

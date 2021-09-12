@@ -57,6 +57,12 @@ exports.createFaculty = async (req, res, next) => {
     res.status(200).json({
       code: 200,
       message: "faculty created",
+      data: {
+        name: faculty.name,
+        fid: faculty.fid,
+        createdAt: faculty.createdAt,
+        departments: "0",
+      },
     });
   } catch (e) {
     console.log(e);
@@ -94,8 +100,8 @@ exports.createDepartment = async (req, res, next) => {
       message: "success",
       data: {
         name: department.name,
-        school: department.schoolId,
-        faculty: department.facultyId,
+        did: department.did,
+        createdAt: department.createdAt,
       },
     });
   } catch (e) {
@@ -128,6 +134,7 @@ exports.createLevel = async (req, res, next) => {
       data: {
         level: req.body.level,
         lid: newlevel.lid,
+        createdAt: newlevel.createdAt,
       },
     });
   } catch (e) {

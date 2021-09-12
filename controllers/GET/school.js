@@ -6,12 +6,13 @@ const sequelize = require("sequelize");
 exports.fetchSchoolsDetails = async (req, res, next) => {
   try {
     const { page, type } = req.query;
+    const limit = 1
     const schools = await schDb.findAll({
       where: {
         type: type,
       },
-      limit: 15,
-      offset: page * 15,
+      limit: limit,
+      offset: page * limit,
       attributes: [
         "id",
         "name",

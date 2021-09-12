@@ -51,6 +51,7 @@ exports.updateKeyStatus = async (req, res, next) => {
       return res.status(result.data.code).json({
         code: 401,
         message: result.message,
+        isValid: false,
       });
     } //validate txId and key
     const transaction = await transactionDb.findOne({
@@ -59,7 +60,7 @@ exports.updateKeyStatus = async (req, res, next) => {
       },
     });
     if (!transaction) {
-      return res.status(404).json({
+      return res.json({
         code: 404,
         message: "transaction not found",
         isValid: false,
@@ -75,6 +76,13 @@ exports.updateKeyStatus = async (req, res, next) => {
         ],
       },
     });
+    if (!lisenseKey) {
+      return res.json({
+        code: 404,
+        message: "no such key",
+        isValid: false,
+      });
+    }
     lisenseKey.usedBy = uid;
     lisenseKey.isUsed = true;
     await lisenseKey.save();

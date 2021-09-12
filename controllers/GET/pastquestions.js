@@ -1,4 +1,5 @@
 const pqDb = require("../../models/pastQuestion");
+const pricingDb = require("../../models/pricing");
 const sequelize = require("sequelize");
 module.exports = async (req, res, next) => {
   try {
@@ -10,11 +11,18 @@ module.exports = async (req, res, next) => {
         message: "invalid credentials",
       });
     }
-    const limit = 10;
+    const limit = 1;
     const pastquestions = await pqDb.findAll({
       limit: limit,
       offset: page * limit,
-      attributes: ["title", "startYear", "endYear", "createdAt", "pid"],
+      attributes: [
+        "title",
+        "startYear",
+        "endYear",
+        "createdAt",
+        "pid",
+        "semester",
+      ],
       where: {
         [sequelize.Op.and]: [
           { schoolId: school.id },
@@ -25,6 +33,26 @@ module.exports = async (req, res, next) => {
         ],
       },
     });
+    //get price
+    if (parseInt(page) == 0) {
+      const pricing = await pricingDb.findOne({
+        where: {
+          [sequelize.Op.and]: [
+            { schoolId: school.id },
+            { facultyId: faculty.id },
+            { departmentId: department.id },
+            { levelId: level.id },
+            { semester: semester },
+          ],
+        },
+        attributes: ["price"],
+      });
+      return res.status(200).json({
+        code: 200,
+        pastquestions: pastquestions,
+        pricing: pricing==null?0:pricing.price,
+      });
+    }
     return res.status(200).json({
       code: 200,
       pastquestions: pastquestions,

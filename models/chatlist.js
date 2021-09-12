@@ -1,22 +1,31 @@
 const sequelize = require("../utils/database");
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("faculty", {
+module.exports = sequelize.define("chatList", {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: false,
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false,
   },
-  abbr: {
+  email: {
     type: Sequelize.STRING,
   },
-  fid: {
-    type: Sequelize.UUID,
+  lastMessage: {
+    type: Sequelize.STRING,
     allowNull: false,
-    defaultValue: Sequelize.UUIDV4,
+  },
+  user: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  time: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  group: {
+    type: Sequelize.STRING,
+    allowNull: false,
   },
 });

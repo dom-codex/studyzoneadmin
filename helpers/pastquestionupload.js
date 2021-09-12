@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     cb(null, "./uploads");
   },
   filename: (req, file, cb) => {
-    const name = `${nanoid(5)}${file.originalname}`;
+    const name = `pastquestion_${nanoid()}_${file.originalname}`;
     req.fileName = name;
     cb(null, name);
   },
@@ -31,7 +31,7 @@ exports.uploadToCloud = async (req, res, next) => {
     const cstorage = new Storage({ keyFilename: "key.json" });
     const result = await cstorage
       .bucket("studyzonespark")
-      .upload(`./uploads/${req.fileName}`, { destination: "test.pdf" });
+      .upload(`./uploads/${req.fileName}`, { destination: `${req.fileName}` });
     req.uri = result[0].metadata.selfLink;
     req.fileId = result[0].metadata.id;
     next();
@@ -48,10 +48,11 @@ exports.uploadToCloud = async (req, res, next) => {
 exports.validateAdmin = async (req, res, next) => {
   try {
     console.log(req.body);
-    const { lid, uid, email, sid, fid, did } = req.body;
+    const { lid, uid, sid, fid, did } =JSON.parse( req.body.data);
+    console.log(req.body.data)
     const admin = await adminDb.findOne({
       where: {
-        [Op.and]: [{ email: email }, { uid: uid }],
+        uid: uid,
       },
       excludes: ["password", "name"],
     });

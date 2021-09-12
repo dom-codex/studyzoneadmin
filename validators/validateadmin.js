@@ -1,4 +1,29 @@
 const adminDb = require("../models/admin");
+exports.validateAdminNew = async (req, res, next) => {
+  try {
+    const { adminId } = req.body;
+    const adminUser = await adminDb.findOne({
+      where: {
+        uid: adminId,
+      },
+    });
+    if (!adminUser) {
+      return res.json({
+        code: 404,
+        message: "invalidate credentials",
+      });
+    }
+    req.admin = adminUser;
+    req.canProceed = true;
+    next();
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      code: 500,
+      message: "an error occurred",
+    });
+  }
+};
 exports.validateAdmin = async (req, res, next) => {
   try {
     const { email, adminId } = req.body;
@@ -28,6 +53,8 @@ exports.validateAdmin = async (req, res, next) => {
 exports.validateAdminOnGetRequest = async (req, res, next) => {
   try {
     const { adminId } = req.query;
+    console.log(req.query)
+    console.log(adminId)
     const admin = await adminDb.findOne({
       where: {
         uid: adminId,

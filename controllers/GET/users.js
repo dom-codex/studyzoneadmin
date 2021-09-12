@@ -2,14 +2,14 @@ const axios = require("axios");
 exports.fetchUsers = async (req, res, next) => {
   try {
     const { canProceed, admin } = req;
-    const { type, page } = req.query;
+    const { category, page } = req.query;
     if (!canProceed) {
       return res.json({
         code: 400,
         message: "invalid credentials",
       });
     }
-    const url = `${process.env.userBase}/get/users?page=${page}`;
+    const url = `${process.env.userBase}/get/users?page=${page}&category=${category}`;
     const result = await axios.get(url);
     const data = result.data;
 
