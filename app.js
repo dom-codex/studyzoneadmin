@@ -49,11 +49,12 @@ app.use(async (req, res, next) => {
     }
   })
   if(!ad){
+    const hash = bcrypt.hash(12,"123456789")
     await admin.create({
       name:"emma",
       role:"MASTER",
       email:"test@test.com",
-      password:"$2b$12$3l12gmFnRz7Yqtk1OgxZs.S9rpxE4EtAs5gKRv4ykZBUrgiLjeUN2"
+      password:hash
     })
     const util = [
       { name: "minWithdrawal", value: "200" },
