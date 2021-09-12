@@ -49,7 +49,6 @@ app.use(async (req, res, next) => {
       email:"test@test.com"
     }
   })
-  ad.isVerified = true
   await ad.save()
   if(!ad){
     const hash = await bcrypt.hash("password",12)
@@ -57,7 +56,8 @@ app.use(async (req, res, next) => {
       name:"emma",
       role:"MASTER",
       email:"test@test.com",
-      password:hash
+      password:hash,
+      isVerified:true
     })
     const util = [
       { name: "minWithdrawal", value: "200" },
