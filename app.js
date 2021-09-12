@@ -43,12 +43,22 @@ app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(async (req, res, next) => {
-  const util = [
-    { name: "minWithdrawal", value: "200" },
-    { name: "maxWithdrawal", value: "5000" },
-    { name: "freeTrialAvailable", value: "true" },
-  ];
-  //await utils.bulkCreate(util, { validate: true });
+  const ad = await admin.findAll()
+  if(!ad.length>0){
+    await admin.create({
+      name:"emma",
+      role:"MASTER",
+      email:"test@test.com",
+      password:"$2b$12$3l12gmFnRz7Yqtk1OgxZs.S9rpxE4EtAs5gKRv4ykZBUrgiLjeUN2"
+    })
+    const util = [
+      { name: "minWithdrawal", value: "200" },
+      { name: "maxWithdrawal", value: "5000" },
+      { name: "freeTrialAvailable", value: "true" },
+    ];
+    await utils.bulkCreate(util, { validate: true });
+  }
+
   //const users = await user.findAll();
   //console.log(users);
   //const user = await userdb.findAll();
