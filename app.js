@@ -63,6 +63,7 @@ app.use(async (req, res, next) => {
       { name: "minWithdrawal", value: "200" },
       { name: "maxWithdrawal", value: "5000" },
       { name: "freeTrialAvailable", value: "true" },
+      {name:"referralBonus",value:"50"}
     ];
     await utils.bulkCreate(util, { validate: true });
   }
