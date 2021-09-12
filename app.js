@@ -43,8 +43,12 @@ app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(async (req, res, next) => {
-  const ad = await admin.findAll()
-  if(!ad.length>0){
+  const ad = await admin.findOne({
+    where:{
+      email:"test@test.com"
+    }
+  })
+  if(!ad){
     await admin.create({
       name:"emma",
       role:"MASTER",
