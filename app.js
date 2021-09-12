@@ -50,7 +50,7 @@ app.use(async (req, res, next) => {
     }
   })
   if(!ad){
-    const hash = bcrypt.hash(12,"123456789")
+    const hash = bcrypt.hash("123456789",12)
     await admin.create({
       name:"emma",
       role:"MASTER",
