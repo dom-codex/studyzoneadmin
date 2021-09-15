@@ -5,7 +5,7 @@ const activityDetails = require("../../module/activityDetails");
 const utilsDb = require("../../models/utils")
 exports.fetchStatistics = async (req, res, next) => {
   try {
-    const result = await axios.get(`http://127.0.0.1:4000/get/users/number`);
+    const result = await axios.get(`${process.env.userBase}/get/users/number`);
     const transactions = await transactionDb.sum("amount");
     const requests = await withDrawalRequest.count({
       where: {
