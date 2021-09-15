@@ -16,6 +16,8 @@ const facultyValidator = require("../validators/validateFaculty");
 const deptValidator = require("../validators/validateDepartment");
 const levelValidator = require("../validators/validateLevel");
 const userController = require("../controllers/GET/users");
+const lisenseKeyController = require("../controllers/lisenseKey");
+const vendorController = require("../controllers/vendor");
 router.get("/stats", getController.fetchStatistics);
 router.get("/schools", schoolController.fetchSchoolsDetails);
 router.get("/activity/details", getController.fetchDetails);
@@ -84,5 +86,22 @@ router.post(
   "/pastquestion/amount",
   pastQuestionController.getPastQuestionsPrice
 );
-router.get("/freetrial/status",getController.checkForFreeTrialStatus)
+router.get("/freetrial/status", getController.checkForFreeTrialStatus);
+router.get(
+  "/keys/statistics",
+  validators.validateAdminOnGetRequest,
+  lisenseKeyController.getKeyStats
+);
+router.get(
+  "/lisensekeys",
+  validators.validateAdminOnGetRequest,
+  lisenseKeyController.getLisensekeys
+);
+router.get(
+  "/vendor/keys",
+  validators.validateAdminOnGetRequest,
+  vendorController.getVendorKeys
+);
+router.get("/vendors",validators.validateAdminOnGetRequest,vendorController.getVendors)
+router.get("/vendor/stats",validators.validateAdminOnGetRequest,vendorController.getVendorStats)
 module.exports = router;

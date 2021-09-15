@@ -8,7 +8,8 @@ const uploadController = require("../controllers/uploadPastQuestion");
 const keyGen = require("../helpers/keyGen");
 const keyGenController = require("../controllers/lisenseKey");
 const transactionController = require("../controllers/transaction");
-
+const validator = require("../validators/validateadmin");
+const vendorController = require("../controllers/vendor");
 router.post(
   "/school",
   schoolHelper.validateSchoolCreationDetails,
@@ -38,5 +39,9 @@ router.post(
 );
 router.post("/keys", keyGen.validateKeyGen, keyGenController.genLisenseKey);
 router.post("/transaction", transactionController.createTransaction);
-
+router.post(
+  "/vendor",
+  validator.validateAdminNew,
+  vendorController.createVendor
+);
 module.exports = router;

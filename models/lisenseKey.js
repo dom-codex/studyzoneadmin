@@ -11,6 +11,10 @@ module.exports = sequelize.define("lisenseKeys", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  keyId: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4,
+  },
   forWhom: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -21,6 +25,9 @@ module.exports = sequelize.define("lisenseKeys", {
   },
   usedBy: {
     type: Sequelize.UUID,
+  },
+  user: {
+    type: Sequelize.STRING,
   },
   isUsed: {
     type: Sequelize.BOOLEAN,

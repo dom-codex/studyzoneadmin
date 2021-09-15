@@ -4,7 +4,7 @@ const path = require("path");
 //core impor
 const cors = require("./utils/cors");
 const sequelize = require("./utils/database");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 const userdb = require("./utils/userDatabase");
 const io = require("./socket");
 //MODELS IMPORT
@@ -20,7 +20,8 @@ const transaction = require("./models/transaction");
 const utils = require("./models/utils");
 const pricing = require("./models/pricing");
 const testimony = require("./models/testimony");
-const notification = require("./models/notification")
+const notification = require("./models/notification");
+const vendor = require("./models/vendor");
 //custom imports
 const authRoute = require("./routes/auth");
 const schoolRoute = require("./routes/school");
@@ -45,25 +46,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(async (req, res, next) => {
   const ad = await admin.findOne({
-    where:{
-      email:"test@test.com"
-    }
-  })
-  if(!ad){
-    const hash = await bcrypt.hash("password",12)
+    where: {
+      email: "test@test.com",
+    },
+  });
+  if (!ad) {
+    const hash = await bcrypt.hash("password", 12);
     await admin.create({
-      name:"emma",
-      role:"MASTER",
-      email:"test@test.com",
-      password:hash,
-      isVerified:true,
-      loggedIn:true
+      name: "emma",
+      role: "MASTER",
+      email: "test@test.com",
+      password: hash,
+      isVerified: true,
+      loggedIn: true,
+    });
+    await vendor.create({
+      name:"ADMIN"
     })
     const util = [
       { name: "minWithdrawal", value: "200" },
       { name: "maxWithdrawal", value: "5000" },
       { name: "freeTrialAvailable", value: "true" },
-      {name:"referralBonus",value:"50"}
+      { name: "referralBonus", value: "50" },
     ];
     await utils.bulkCreate(util, { validate: true });
   }
@@ -72,6 +76,7 @@ app.use(async (req, res, next) => {
   //console.log(users);
   //const user = await userdb.findAll();
   //  console.log(user);
+
   next();
 });
 app.use("/auth", authRoute);
@@ -116,6 +121,8 @@ level.hasMany(transaction);
 transaction.belongsTo(level);
 pastQuestion.hasMany(downloadSlug);
 downloadSlug.belongsTo(pastQuestion);
+vendor.hasMany(lisenseKey);
+lisenseKey.belongsTo(vendor);
 //user.hasMany(lisenseKey);
 //user.hasMany(withDrawalRequest);
 //change price for pq db to non null
@@ -124,7 +131,7 @@ downloadSlug.belongsTo(pastQuestion);
 //change isUser for keys db to non null
 sequelize.sync().then(() => {
   server.listen(process.env.PORT);
- io.init(server);
+  io.init(server);
 
   console.log("listening...");
 });

@@ -2,11 +2,11 @@ const adminDb = require("../models/admin");
 const { Op } = require("sequelize");
 exports.validateKeyGen = async (req, res, next) => {
   try {
-    const { whom, uid, email } = req.body;
+    const { whom, adminId, email } = req.body;
     //validate admin
     const admin = await adminDb.findOne({
       where: {
-        [Op.and]: [{ email: email }, { uid: uid }],
+      uid: adminId
       },
       excludes: ["password"],
     });

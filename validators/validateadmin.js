@@ -53,8 +53,6 @@ exports.validateAdmin = async (req, res, next) => {
 exports.validateAdminOnGetRequest = async (req, res, next) => {
   try {
     const { adminId } = req.query;
-    console.log(req.query)
-    console.log(adminId)
     const admin = await adminDb.findOne({
       where: {
         uid: adminId,
