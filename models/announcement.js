@@ -17,6 +17,6 @@ module.exports = sequelize.define("announcement",{
   },
   aid:{
     type:Sequelize.UUID,
-    defaultVale:Sequelize.UUID4
+    defaultValue: Sequelize.UUIDV4(),
   }
 })

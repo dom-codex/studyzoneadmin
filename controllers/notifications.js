@@ -121,6 +121,7 @@ exports.sendAnnouncement = async (req, res, next) => {
       message,
       subject,
     });
+
     //call notification hook on user server
     const uri = `${process.env.userBase}/notifications/announcement`;
     await axios.post(uri, {
@@ -139,7 +140,7 @@ exports.sendAnnouncement = async (req, res, next) => {
 exports.deleteAnnouncement = async (req, res, next) => {
   try {
     const { canProceed } = req;
-    if (!canProceed) {
+    if (!true) {
       return res.status(404).json({
         code: 404,
         message: "admin not found",

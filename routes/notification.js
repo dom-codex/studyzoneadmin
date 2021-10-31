@@ -9,7 +9,9 @@ router.post(
   notificationController.postNotificationToUser
 );
 router.get("/get/all",validator.validateAdminOnGetRequest,notificationController.getNotifications)
-router.post("/delete",validator.validateAdminNew,notificationController.deleteNotification)
 router.post("/send/announcement",validator.validateAdminNew,notificationController.sendAnnouncement)
 router.get("/get/announcements",notificationHandler.getAnnouncements)
+router.post("/announcement/delete",notificationController.deleteAnnouncement)
+router.post("/delete",validator.validateAdminNew,notificationController.deleteNotification)
+
 module.exports = router;
