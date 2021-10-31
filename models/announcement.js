@@ -4,7 +4,8 @@ module.exports = sequelize.define("announcement",{
   id:{
     type:Sequelize.INTEGER,
     allowNull:false,
-    primaryKey:true
+    primaryKey:true,
+    autoIncrement: true
   },
   message:{
     type:Sequelize.STRING(10000),

@@ -10,6 +10,12 @@ router.post(
   validator.validateAdminNew,
   chatcontroller.sendMessageToUser
 );
+router.post(
+  "/send/media/message",
+  chatcontroller.imageUploader,
+  validator.validateAdminNew,
+  chatcontroller.sendMediaMessageToUser
+);
 router.get(
   "/get/chatlist",
   validator.validateAdminOnGetRequest,
@@ -20,5 +26,5 @@ router.get(
   validator.validateAdminOnGetRequest,
   chatController.getChats
 );
-router.post("/get/offline/chats",chatController.getOfflineChats)
+router.post("/get/offline/chats", chatController.getOfflineChats);
 module.exports = router;

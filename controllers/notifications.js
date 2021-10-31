@@ -1,6 +1,6 @@
 const axios = require("axios");
-const notificationDb = require("../models/notification")
-const announcementDb = require("../models/announcement")
+const notificationDb = require("../models/notification");
+const announcementDb = require("../models/announcement");
 exports.postNotificationToUser = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -35,124 +35,128 @@ exports.postNotificationToUser = async (req, res, next) => {
     res.status(e).end;
   }
 };
-exports.getNotifications = async(req,res,next)=>{
-  try{
-    const {canProceed}= req
-    if(!canProceed){
+exports.getNotifications = async (req, res, next) => {
+  try {
+    const { canProceed } = req;
+    if (!canProceed) {
       return res.status(404).json({
-        code:404,
-        message:"admin not found"
-      })
+        code: 404,
+        message: "admin not found",
+      });
     }
-    const limit = 1
-    const {page} = req.query
+    const limit = 1;
+    const { page } = req.query;
     const notifications = await notificationDb.findAll({
-      limit:limit,
-      offset:page*limit
-    })
+      limit: limit,
+      offset: page * limit,
+    });
     return res.status(200).json({
-      code:200,
-      notifications:notifications
-    })
-  }catch(e){
-    console.log(e)
-    res.status(500).end()
+      code: 200,
+      notifications: notifications,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
   }
-}
-exports.deleteNotification = async(req,res,next)=>{
-  try{
-    const {canProceed} = req
-    if(!canProceed){
+};
+exports.deleteNotification = async (req, res, next) => {
+  try {
+    const { canProceed } = req;
+    if (!canProceed) {
       return res.status(404).json({
-        code:404,
-        message:"admin not found"
-      })
+        code: 404,
+        message: "admin not found",
+      });
     }
-    const {id} = req.body
+    const { id } = req.body;
     await notificationDb.destroy({
-      where:{
-        nid:id
-      }
-    })
+      where: {
+        nid: id,
+      },
+    });
     res.status(200).json({
-      code:200,
-      message:"deleted"
-    })
-  }catch(e){
-    console.log(e)
-    res.status(500).end()
+      code: 200,
+      message: "deleted",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
   }
-}
-exports.getAnnouncements = async(req,res,next)=>{
-  try{
-    const {canProceed}= req
-    if(!canProceed){
+};
+exports.getAnnouncements = async (req, res, next) => {
+  try {
+    const { canProceed } = req;
+    if (!canProceed) {
       return res.status(404).json({
-        code:404,
-        message:"admin not found"
-      })
+        code: 404,
+        message: "admin not found",
+      });
     }
-    const limit = 1
-    const {page} = req.query
+    const limit = 1;
+    const { page } = req.query;
     const announcements = await announcementDb.findAll({
-      limit:limit,
-      offset:page*limit
-    })
+      limit: limit,
+      offset: page * limit,
+    });
     return res.status(200).json({
-      code:200,
-      announcements:announcements
-    })
-  }catch(e){
-    console.log(e)
-    res.status(500).end()
+      code: 200,
+      announcements: announcements,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
   }
-}
-exports.sendAnnouncement = async(req,res,next)=>{
-  try{
-    const {canProceed} = req
-    if(!canProceed){
+};
+exports.sendAnnouncement = async (req, res, next) => {
+  try {
+    const { canProceed } = req;
+    if (!canProceed) {
       return res.status(404).json({
-        code:404,
-        message:"admin not found"
-      })
+        code: 404,
+        message: "admin not found",
+      });
     }
     const { user, message, subject } = req.body;
     const announcement = await announcementDb.create({
       message,
-      subject
-    })
+      subject,
+    });
     //call notification hook on user server
-res.status(201).json({
-  code:200,
-  message:"sent",
-  announcement
-})
-  }catch(e){
-    console.log(e)
-    res.status(500).end()
+    const uri = `${process.env.userBase}/notifications/announcement`;
+    await axios.post(uri, {
+      announcement: announcement.dataValues,
+    });
+    res.status(201).json({
+      code: 200,
+      message: "sent",
+      announcement,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
   }
-}
-exports.deleteAnnouncement = async(req,res,next)=>{
-  try{
-    const {canProceed} = req
-    if(!canProceed){
+};
+exports.deleteAnnouncement = async (req, res, next) => {
+  try {
+    const { canProceed } = req;
+    if (!canProceed) {
       return res.status(404).json({
-        code:404,
-        message:"admin not found"
-      })
+        code: 404,
+        message: "admin not found",
+      });
     }
-    const {id} = req.body
+    const { id } = req.body;
     await announcementDb.destroy({
-      where:{
-        aid:id
-      }
-    })
+      where: {
+        aid: id,
+      },
+    });
     res.status(200).json({
-      code:200,
-      message:"deleted"
-    })
-  }catch(e){
-    console.log(e)
-    res.status(500).end()
+      code: 200,
+      message: "deleted",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).end();
   }
-}
+};

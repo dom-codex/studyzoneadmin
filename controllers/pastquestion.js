@@ -31,6 +31,7 @@ exports.getPastQuestionsPrice = async (req, res, next) => {
       },
       attributes: ["price"],
     });
+    console.log(pricing)
     return res.status(200).json({
       code: 200,
       price: pricing != null ? pricing.dataValues.price : 0,
@@ -56,7 +57,7 @@ const {
   department,
   level,
 } = await validateFullSchool(req);
-const {semester,price} = req.body
+const {semester,pricing} = req.body
 if (!isValid) {
   return res.status(404).json({
     code: 404,
@@ -66,7 +67,7 @@ if (!isValid) {
 }
 //check if pricing already exists
 
-const pricing = await pricingDb.findOne({
+const pricingLog = await pricingDb.findOne({
   where: {
     [Op.and]: [
       { schoolId: school.id },
@@ -76,12 +77,12 @@ const pricing = await pricingDb.findOne({
       { semester: semester },
     ],
   },
-  attributes: ["price"]
+  attributes: ["id","price"]
 });
-if(!pricing){
+if(!pricingLog){
   //create findOne
   const newPricing = await pricingDb.create({
-    price:price,
+    price:pricing,
     title:`${level.name} ${school.name} ${department.name} pastquestions`,
     schoolId:school.id,
     facultyId:faculty.id,
@@ -94,7 +95,9 @@ if(!pricing){
     message:"price updated"
   })
 }
-await pricingDb.update({price:price},{
+pricingLog.price = pricing
+await pricingLog.save()
+/*await pricingDb.update({price:price},{
   where: {
     [Op.and]: [
       { schoolId: school.id },
@@ -104,7 +107,7 @@ await pricingDb.update({price:price},{
       { semester: semester },
     ],
   }
-})
+})*/
 res.status(200).json({
   code:200,
   message:"price updated"

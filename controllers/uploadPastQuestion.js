@@ -30,7 +30,19 @@ exports.createPastQuestion = async (req, res, next) => {
     });
     //create pricing entry
     const fileName = req.fileName;
-    fs.unlink(`./uploads/${fileName}`, (e) => {
+    res.status(200).json({
+      code: 200,
+      message: "successful",
+      data: {
+        title,
+        start,
+        end,
+        pid: pq.pid,
+        createdAt: pq.createdAt,
+      },
+    });
+    //fix it later
+    /* fs.unlink(`./uploads/${fileName}`, (e) => {
       res.status(200).json({
         code: 200,
         message: "successful",
@@ -42,7 +54,7 @@ exports.createPastQuestion = async (req, res, next) => {
           createdAt: pq.createdAt,
         },
       });
-    });
+    });*/
   } catch (e) {
     console.log(e);
     fs.unlink(`./uploads/${req.fileName}`, (e) => {

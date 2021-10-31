@@ -1,5 +1,6 @@
 const pastQuestionDb = require("../models/pastQuestion");
 const { Storage } = require("@google-cloud/storage");
+const cloudinary = require("cloudinary")
 exports.deletePastQuestion = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -18,8 +19,9 @@ exports.deletePastQuestion = async (req, res, next) => {
       attributes: ["id", "fileName"],
     });
     //delete from cloud
-    const cloud = Storage({ keyFilename: "key.json" });
-    const result = cloud.bucket("studyzonespark").file(pq.fileName).delete();
+    /*const cloud = Storage({ keyFilename: "key.json" });
+    const result = cloud.bucket("studyzonespark").file(pq.fileName).delete();*/
+    //await clodunary.v2.uploader.destroy(pq.cloudUri)
     //delete from database
     await pq.destroy();
     res.status(200).json({

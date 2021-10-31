@@ -37,7 +37,7 @@ exports.getOnePastQuestionForDownload = async (req, res, next) => {
           {pid:pid}
         ],
       },
-      attributes: ["fileName", "pid"],
+      attributes: ["fileName", "pid","cloudUri","cloudId"],
     });
     if (!pastquestion) {
       return res.status(404).json({

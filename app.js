@@ -38,12 +38,14 @@ const downloadSlug = require("./models/downloadSlug");
 const userRoute = require("./routes/userroutes");
 const chatRoute = require("./routes/chat");
 const settingsRoute = require("./routes/settings");
+const searchRoute = require("./routes/search");
 const app = express();
 const server = http.createServer(app);
 
 app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.join(__dirname,"uploads")));
 app.use(async (req, res, next) => {
   const ad = await admin.findOne({
     where: {
@@ -61,8 +63,8 @@ app.use(async (req, res, next) => {
       loggedIn: true,
     });
     await vendor.create({
-      name:"ADMIN"
-    })
+      name: "ADMIN",
+    });
     const util = [
       { name: "minWithdrawal", value: "200" },
       { name: "maxWithdrawal", value: "5000" },
@@ -92,6 +94,7 @@ app.use("/user", userRoute);
 app.use("/notification", notificationRoute);
 app.use("/chat", chatRoute);
 app.use("/settings", settingsRoute);
+app.use("/search", searchRoute);
 admin.hasMany(lisenseKey);
 //admin.hasMany(school);
 school.hasMany(faculty);
@@ -129,7 +132,7 @@ lisenseKey.belongsTo(vendor);
 //change sales for pq db to non null
 //change sales for userId db to non null
 //change isUser for keys db to non null
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true }).then(() => {
   server.listen(process.env.PORT);
   io.init(server);
 

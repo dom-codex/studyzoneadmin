@@ -1,3 +1,4 @@
+const axios = require("axios");
 const withDrawalRequestDb = require("../models/withDrawalRequest");
 exports.processWithDrawal = async (req, res, next) => {
   try {
@@ -40,6 +41,37 @@ exports.processWithDrawalRequestStatus = async (req, res, next) => {
       });
     }
     const { status, withdrawalHash } = req.body;
+    //send request to restore user amount
+    const record = await withDrawalRequestDb.findOne({
+      where: {
+        wid: withdrawalHash,
+      },
+      attribute: ["requestedBy", "requesteeEmail", "amount"],
+    });
+    if (status === "DECLINED") {
+      const uri = `${process.env.userBase}/withdrawal/reverse`;
+      const feedBack = await axios.post(uri, {
+        amount: record.amount,
+        email: record.requesteeEmail,
+        userId: record.requestedBy,
+      });
+      const updated = await withDrawalRequestDb.update(
+        {
+          status: status,
+        },
+        {
+          where: {
+            wid: withdrawalHash,
+          },
+        }
+      );
+      return res.status(200).json({
+        code: 200,
+        message: "updated",
+        withdrawalId: withdrawalHash,
+        status: status,
+      });
+    }
     const updated = await withDrawalRequestDb.update(
       {
         status: status,
@@ -50,9 +82,17 @@ exports.processWithDrawalRequestStatus = async (req, res, next) => {
         },
       }
     );
+    //send approval
+    const uri = `${process.env.userBase}/notifications/post`;
+    await axios.post(uri, {
+      user: record.requestedBy,
+      subject: "Withdrawal Approved",
+      message:
+        " Your withdrawal request has been approved and is being processed",
+    });
     return res.status(200).json({
       code: 200,
-      message: "update",
+      message: "updated",
       withdrawalId: withdrawalHash,
       status: status,
     });

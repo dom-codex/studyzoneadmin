@@ -50,7 +50,7 @@ module.exports = async (req, res, next) => {
       return res.status(200).json({
         code: 200,
         pastquestions: pastquestions,
-        pricing: pricing==null?0:pricing.price,
+        pricing: pricing == null ? 0 : pricing.price,
       });
     }
     return res.status(200).json({
