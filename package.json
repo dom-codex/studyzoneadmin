@@ -19,6 +19,7 @@
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.27.1",
+    "dropbox": "^10.23.0",
     "express": "^4.17.1",
     "flutterwave-node-v3": "^1.0.8",
     "moment": "^2.29.1",

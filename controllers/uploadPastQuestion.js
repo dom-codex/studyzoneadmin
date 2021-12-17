@@ -1,18 +1,17 @@
 const pricing = require("../models/pricing");
 const pastQuestionDb = require("../models/pastQuestion");
 const fs = require("fs");
+const path = require("path")
 exports.createPastQuestion = async (req, res, next) => {
   try {
-    const canCreate = req.canCreate;
-    if (!canCreate) {
       //delete file from upload
-      const fileName = req.fileName;
+     /* const fileName = req.fileName;
       return fs.unlink(`./uploads/${fileName}`, (e) => {
         return res.status(400).json({
           message: "an error occurred",
         });
-      });
-    }
+      });*/
+  
     const { title, start, end, semester } = JSON.parse(req.body.data);
 
     const pq = await pastQuestionDb.create({
@@ -30,7 +29,12 @@ exports.createPastQuestion = async (req, res, next) => {
     });
     //create pricing entry
     const fileName = req.fileName;
-    res.status(200).json({
+    const pathTofile = path.join(`./uploads/${req.fileName}`);
+    const resCallback = (e)=>{
+      if(e){
+        console.log(e)
+      }
+         res.status(200).json({
       code: 200,
       message: "successful",
       data: {
@@ -41,23 +45,15 @@ exports.createPastQuestion = async (req, res, next) => {
         createdAt: pq.createdAt,
       },
     });
-    //fix it later
-    /* fs.unlink(`./uploads/${fileName}`, (e) => {
-      res.status(200).json({
-        code: 200,
-        message: "successful",
-        data: {
-          title,
-          start,
-          end,
-          pid: pq.pid,
-          createdAt: pq.createdAt,
-        },
-      });
-    });*/
+    }
+
+    fs.unlink(pathTofile,resCallback)
+
   } catch (e) {
     console.log(e);
-    fs.unlink(`./uploads/${req.fileName}`, (e) => {
+    const pathTofile = path.join(`./uploads/${req.fileName}`);
+    fs.unlink(pathTofile, (e) => {
+      if(e)console.log(e)
       res.status(500).json({
         message: "an error occurred",
       });
