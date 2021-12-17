@@ -47,33 +47,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname,"uploads")));
 app.use(async (req, res, next) => {
-  const ad = await admin.findOne({
-    where: {
-      email: "test@test.com",
-    },
-  });
-  if (!ad) {
-    const hash = await bcrypt.hash("password", 12);
-    await admin.create({
-      name: "emma",
-      role: "MASTER",
-      email: "test@test.com",
-      password: hash,
-      isVerified: true,
-      loggedIn: true,
-    });
-    await vendor.create({
-      name: "ADMIN",
-    });
-    const util = [
-      { name: "minWithdrawal", value: "200" },
-      { name: "maxWithdrawal", value: "5000" },
-      { name: "freeTrialAvailable", value: "true" },
-      { name: "referralBonus", value: "50" },
-    ];
-    await utils.bulkCreate(util, { validate: true });
-  }
-
+ 
   //const users = await user.findAll();
   //console.log(users);
   //const user = await userdb.findAll();
@@ -133,8 +107,38 @@ lisenseKey.belongsTo(vendor);
 //change sales for userId db to non null
 //change isUser for keys db to non null
 sequelize.sync({ alter: true }).then(() => {
-  server.listen(process.env.PORT);
+  createAdmin()
+  server.listen(4500);
   io.init(server);
 
   console.log("listening...");
 });
+const createAdmin = async()=>{
+  const ad = await admin.findOne({
+    where: {
+      email: "test@test.com",
+    },
+  });
+  if (!ad) {
+    const hash = await bcrypt.hash("password", 12);
+    await admin.create({
+      name: "emma",
+      role: "MASTER",
+      email: "test@test.com",
+      password: hash,
+      isVerified: true,
+      loggedIn: true,
+    });
+    await vendor.create({
+      name: "ADMIN",
+    });
+    const util = [
+      { name: "minWithdrawal", value: "200" },
+      { name: "maxWithdrawal", value: "5000" },
+      { name: "freeTrialAvailable", value: "true" },
+      { name: "referralBonus", value: "50" },
+      {name:"numberOfWithdrawalBeforeTestimonyEnforcement", value:1}
+    ];
+    await utils.bulkCreate(util, { validate: true });
+  }
+}

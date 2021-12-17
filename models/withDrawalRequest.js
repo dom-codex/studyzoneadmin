@@ -29,6 +29,19 @@ module.exports = sequelize.define("withdrawalRequest", {
   requesteeEmail: {
     type: Sequelize.STRING,
   },
+  BankName:{
+    type: Sequelize.STRING,
+  },
+  BankAccountNo:{
+    type: Sequelize.STRING,
+  },
+  BankAccountName:{
+    type: Sequelize.STRING,
+  },
+  BankCode:{
+    type: Sequelize.STRING,
+
+  },
   status: {
     type: Sequelize.STRING,
     defaultValue: "PENDING",

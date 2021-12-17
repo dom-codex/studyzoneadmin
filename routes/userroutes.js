@@ -12,6 +12,17 @@ const departmentValidator = require("../validators/validateDepartment");
 const levelValidator = require("../validators/validateLevel");
 const userController = require("../controllers/user");
 const { validateAdminNew } = require("../validators/validateadmin");
+//new
+const {
+  getPastQuestions,
+  checkFreeTrialAvailability,
+  getPastQuestionPrice,
+} = require("../requestsFromUserController/pastquestions");
+const {
+  createTransaction,
+  createTransactionForKeyOrCardPayment,
+  confirmTransaction,
+} = require("../requestsFromUserController/transactions");
 router.get("/get/school", schController.fetchSchoolsDetails);
 router.get(
   "/get/school/faculty",
@@ -31,6 +42,7 @@ router.get(
   departmentValidator.validateDepartment,
   levelsController
 );
+//to delete
 router.get(
   "/get/pastquestions",
   schValidator.validateSchoolForUserRequest,
@@ -45,4 +57,14 @@ router.post(
   validateAdminNew,
   userController.toggleUserStatus
 );
+//new method
+router.get("/get/pastquestions/only", getPastQuestions);
+router.get("/get/freetrial/settings", checkFreeTrialAvailability);
+router.get("/get/pastquestions/price", getPastQuestionPrice);
+router.post("/new/transaction", createTransaction);
+router.post(
+  "/create/new/payment/transaction",
+  createTransactionForKeyOrCardPayment
+);
+router.get("/get/transaction/status", confirmTransaction);
 module.exports = router;

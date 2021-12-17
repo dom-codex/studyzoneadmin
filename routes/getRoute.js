@@ -18,6 +18,7 @@ const levelValidator = require("../validators/validateLevel");
 const userController = require("../controllers/GET/users");
 const lisenseKeyController = require("../controllers/lisenseKey");
 const vendorController = require("../controllers/vendor");
+const {getReferralBonus} = require("../requestsFromUserController/referral")
 router.get("/stats", getController.fetchStatistics);
 router.get("/schools", schoolController.fetchSchoolsDetails);
 router.get("/activity/details", getController.fetchDetails);
@@ -104,4 +105,5 @@ router.get(
 );
 router.get("/vendors",validators.validateAdminOnGetRequest,vendorController.getVendors)
 router.get("/vendor/stats",validators.validateAdminOnGetRequest,vendorController.getVendorStats)
+router.get("/referral/bonus",getReferralBonus)
 module.exports = router;

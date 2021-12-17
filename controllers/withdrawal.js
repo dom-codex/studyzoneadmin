@@ -1,5 +1,57 @@
 const axios = require("axios");
 const withDrawalRequestDb = require("../models/withDrawalRequest");
+const testimonyDb = require("../models/testimony")
+const utilityDb = require("../models/utils")
+exports.comfirmWithdrawalStatus = async(req,res,next)=>{
+  try{
+    //get user details
+    const {user} = req.query
+    //get check if user has already a testimony
+    const testimony = await testimonyDb.findOne({
+      where:{
+        user:user
+      },
+      attributes:[
+        "id"
+      ]
+    })
+    if(testimony){
+      return res.status(200).json({
+        canProceed:true
+      })
+    }
+    // if not retrieve no of withdrawals before testimony upload is enforced
+    const utility = await utilityDb.findOne({
+      where:{
+        name:"numberOfWithdrawalBeforeTestimonyEnforcement"
+      },
+      attributes:["value"]
+    })
+    //get the counts of withdrawals performed by user which have being processed
+    const withdrawals = await withDrawalRequestDb.findAndCountAll({
+      where:{
+        requestedBy:user,
+        attendedTo:true,
+        status:"COMFRIMED"
+      }
+    })
+    //compare and act accordingly
+    if(utility.value.toString() > withdrawals.count.toString()){
+      return res.status(200).json({
+        canProceed:true
+      })
+    }
+    //tell user to upload testimony
+    return res.status(200).json({
+      canProceed:false
+    })
+  }catch(e){
+    console.log(e)
+    res.status(500).json({
+      message:"an error occurred!!!"
+    })
+  }
+}
 exports.processWithDrawal = async (req, res, next) => {
   try {
     const { userName, uid, userEmail, canProceed } = req;
@@ -9,13 +61,18 @@ exports.processWithDrawal = async (req, res, next) => {
         message: "an error occurred, try again",
       });
     }
-    const { amount } = req.body;
+    const { amount,bank,accountNo,accountName,bankCode } = req.body;
     //notify admin of withdrawal request
     const newRequest = await withDrawalRequestDb.create({
       amount: amount,
       requestedBy: uid,
       requesteeName: userName,
       requesteeEmail: userEmail,
+      BankName:bank,
+      BankAccountName:accountName,
+      BankAccountNo:accountNo,
+      BankCode:bankCode
+
     });
     //send notification to admin
     res.status(200).json({
