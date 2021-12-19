@@ -8,8 +8,9 @@ const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
-const cloudinary = require("cloudinary");
 const nanoid = require("nanoid").nanoid
+const { Dropbox } = require("dropbox")
+const getLink = require("../utility/createOrGetLink")
 exports.receiveMessageFromUser = async (req, res, next) => {
   try {
     const {
@@ -41,7 +42,7 @@ exports.receiveMessageFromUser = async (req, res, next) => {
         name,
         email,
       });
-    }else{
+    } else {
       //create chat
       const newChat = await chatDb.create({
         sender: sender,
@@ -87,11 +88,7 @@ exports.receiveMessageFromUser = async (req, res, next) => {
     res.status(500).json({ code: 500, message: "an error occured" });
   }
 };
-const deleteFile = (fileName, cb) => {
-  fs.unlink(`./uploads/${fileName}`, (e) => {
-    cb();
-  });
-};
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./uploads");
@@ -104,9 +101,16 @@ const storage = multer.diskStorage({
   //add mime type and size filter
 });
 exports.imageUploader = multer({ storage: storage }).single("chatImage");
+//FILE UNLINK FUNCTION
+const deleteFile = (path, cb) => {
+  fs.unlink(path, (e) => {
+    cb()
+  })
+}
 exports.sendMediaMessageToUser = async (req, res, next) => {
+  const { fileName } = req
   try {
-    const { canProceed, fileName } = req;
+    const { canProceed } = req;
     if (!canProceed) {
       console.log("could not upload file");
       return res.status(404).json({
@@ -116,15 +120,11 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
     }
     //save image to cloud
     const pathTofile = path.join(`./uploads/${fileName}`);
-    const { secure_url, public_id } = await cloudinary.v2.uploader.upload(
-      pathTofile,
-    );
-    /* const cloudStorage = new Storage({ keyFilename: "./key.json" });
-    const result = await cloudStorage
-      .bucket("chatImages")
-      .upload(`./${pathTofile}`, { destination: fileName });
-    const filelink = result[0].metadata.selfLink;
-    const fileId = result[0].metadata.id;*/
+    const dropbox = new Dropbox({ accessToken: process.env.dropboxToken })
+    const result = await dropbox.filesUpload({ path: `/support/${fileName}` })
+    //GET LINK TO UPLOADED IMAGE
+    const newLink= await getLink("support",fileName)
+    
     const { message, group, sender, time, receiver } = req.body;
     const newChat = await chatDb.build({
       message: message,
@@ -132,8 +132,8 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
       sender: sender,
       group: group,
       messageType: "SENDER_WITH_MEDIA",
-      mediaName: public_id,
-      mediaUrl: secure_url,
+      mediaName: fileName,
+      mediaUrl: newLink,
     });
     //send message to user
     const uri = `${process.env.userBase}/support/send/message/to/user`;
@@ -143,15 +143,19 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
       time,
       sender,
       chatId: newChat.chatId,
-      mediaName: public_id,
-      mediaUrl: secure_url,
+      mediaName: fileName,
+      mediaUrl: newLink,
     });
     //if successful commit to dataBase
     if (data.code != 200) {
-      return res.status(401).json({
+      //UNLINK FILE FROM SERVER
+      deleteFile(pathTofile,()=>{
+        return res.status(401).json({
         code: 401,
         message: "an error occured",
-      });
+      }); 
+      })
+     
     }
     await newChat.save();
     //update chat list last messageType
@@ -163,17 +167,26 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
         },
       }
     );
-    res.status(200).json({
+    //UNLINK FROM FROM SERVER
+    deleteFile(pathTofile,()=>{
+      res.status(200).json({
       code: 200,
       chatId: newChat.chatId,
       message: "sent",
     });
+    })
+    
   } catch (e) {
     console.log(e);
-    res.status(500).json({
+    //UNLINK FILE FROM SERVER
+    const pathTofile = path.join(`./uploads/${fileName}`);
+    deleteFile(pathTofile,()=>{
+       res.status(500).json({
       code: 500,
       message: "an error occurred",
     });
+    })
+   
   }
 };
 exports.sendMessageToUser = async (req, res, next) => {
