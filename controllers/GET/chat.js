@@ -94,7 +94,7 @@ exports.getChats = async (req, res, next) => {
       });
     }
     const { page, group } = req.query;
-    const limit = 20;
+    const limit = 1;
     const chats = await chatDb.findAll({
       order:[["createdAt","ASC"]],
       where: {
@@ -104,6 +104,7 @@ exports.getChats = async (req, res, next) => {
       offset: limit * page,
       attributes: { exclude: ["id"] },
     });
+    console.log(chats)
     return res.status(200).json({
       code: 200,
       message: "retrieved",
