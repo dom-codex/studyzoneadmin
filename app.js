@@ -108,7 +108,7 @@ lisenseKey.belongsTo(vendor);
 //change isUser for keys db to non null
 sequelize.sync({ alter: true }).then(() => {
   createAdmin()
-  server.listen(4500);
+  server.listen(process.env.PORT);
   io.init(server);
 
   console.log("listening...");
