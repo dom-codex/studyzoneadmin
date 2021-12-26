@@ -40,9 +40,9 @@ exports.getUserTransactions = async (req, res, next) => {
       });
     }
     const { user, page } = req.query;
-    const limit = 10;
+    const limit = 1;
     const userTransactions = await transactionDb.findAll({
-      limit: 10,
+      limit: limit,
       offset: limit * page,
       where: {
         userRef: user,

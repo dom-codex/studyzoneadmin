@@ -20,6 +20,7 @@ const lisenseKeyController = require("../controllers/lisenseKey");
 const vendorController = require("../controllers/vendor");
 const {getReferralBonus} = require("../requestsFromUserController/referral")
 const {getVideoLink} = require("../controllers/testimony")
+const {getUserDetails} = require("../controllers/user")
 router.get("/stats", getController.fetchStatistics);
 router.get("/schools", schoolController.fetchSchoolsDetails);
 router.get("/activity/details", getController.fetchDetails);
@@ -108,4 +109,5 @@ router.get("/vendors",validators.validateAdminOnGetRequest,vendorController.getV
 router.get("/vendor/stats",validators.validateAdminOnGetRequest,vendorController.getVendorStats)
 router.get("/referral/bonus",getReferralBonus)
 router.get("/user/testimony/link",validators.validateAdminOnGetRequest,getVideoLink)
+router.get("/user/info",validators.validateAdminOnGetRequest,getUserDetails)
 module.exports = router;

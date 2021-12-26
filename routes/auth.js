@@ -19,4 +19,5 @@ router.post(
   authHelper.validateVerificationDetails,
   authController.verifyAccount
 );
+router.get("/verify/admin",authController.verifyAdmin)
 module.exports = router;

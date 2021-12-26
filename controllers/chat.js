@@ -121,72 +121,79 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
     //save image to cloud
     const pathTofile = path.join(`./uploads/${fileName}`);
     const dropbox = new Dropbox({ accessToken: process.env.dropboxToken })
-    const result = await dropbox.filesUpload({ path: `/support/${fileName}` })
-    //GET LINK TO UPLOADED IMAGE
-    const newLink= await getLink("support",fileName)
-    
-    const { message, group, sender, time, receiver } = req.body;
-    const newChat = await chatDb.build({
-      message: message,
-      time: time,
-      sender: sender,
-      group: group,
-      messageType: "SENDER_WITH_MEDIA",
-      mediaName: fileName,
-      mediaUrl: newLink,
-    });
-    //send message to user
-    const uri = `${process.env.userBase}/support/send/message/to/user`;
-    const { data } = await axios.post(uri, {
-      message,
-      group,
-      time,
-      sender,
-      chatId: newChat.chatId,
-      mediaName: fileName,
-      mediaUrl: newLink,
-    });
-    //if successful commit to dataBase
-    if (data.code != 200) {
-      //UNLINK FILE FROM SERVER
-      deleteFile(pathTofile,()=>{
-        return res.status(401).json({
-        code: 401,
-        message: "an error occured",
-      }); 
-      })
-     
-    }
-    await newChat.save();
-    //update chat list last messageType
-    await chatListDb.update(
-      { lastMessage: message },
-      {
-        where: {
-          user: receiver,
-        },
+    const uploadCallBack = async(contents) => {
+      const result = await dropbox.filesUpload({ path: `/support/${fileName}`,contents })
+      console.log(result)
+      //GET LINK TO UPLOADED IMAGE
+      const newLink = await getLink("support", fileName)
+
+      const { message, group, sender, time, receiver } = req.body;
+      const newChat = await chatDb.build({
+        message: message,
+        time: time,
+        sender: sender,
+        group: group,
+        messageType: "SENDER_WITH_MEDIA",
+        mediaName: fileName,
+        mediaUrl: newLink,
+      });
+      //send message to user
+      const uri = `${process.env.userBase}/support/send/message/to/user`;
+      const { data } = await axios.post(uri, {
+        message,
+        group,
+        time,
+        sender,
+        chatId: newChat.chatId,
+        mediaName: fileName,
+        mediaUrl: newLink,
+      });
+      //if successful commit to dataBase
+      if (data.code != 200) {
+        //UNLINK FILE FROM SERVER
+        deleteFile(pathTofile, () => {
+          return res.status(401).json({
+            code: 401,
+            message: "an error occured",
+          });
+        })
+
       }
-    );
-    //UNLINK FROM FROM SERVER
-    deleteFile(pathTofile,()=>{
-      res.status(200).json({
-      code: 200,
-      chatId: newChat.chatId,
-      message: "sent",
-    });
+      await newChat.save();
+      //update chat list last messageType
+      await chatListDb.update(
+        { lastMessage: message },
+        {
+          where: {
+            user: receiver,
+          },
+        }
+      );
+      //UNLINK FROM FROM SERVER
+      deleteFile(pathTofile, () => {
+        res.status(200).json({
+          code: 200,
+          chatId: newChat.chatId,
+          message: "sent",
+        });
+      })
+    }
+    fs.readFile(pathTofile, async(e, contents) => {
+      uploadCallBack(contents)
     })
-    
+
+
   } catch (e) {
     console.log(e);
     //UNLINK FILE FROM SERVER
     const pathTofile = path.join(`./uploads/${fileName}`);
-    deleteFile(pathTofile,()=>{
-       res.status(500).json({
-      code: 500,
-      message: "an error occurred",
-    });
+    deleteFile(pathTofile, () => {
+      res.status(500).json({
+        code: 500,
+        message: "an error occurred",
+      });
     })
-   
+
   }
 };
 exports.sendMessageToUser = async (req, res, next) => {

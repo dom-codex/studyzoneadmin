@@ -6,7 +6,7 @@ const utilsDb = require("../../models/utils")
 exports.fetchStatistics = async (req, res, next) => {
   try {
     const result = await axios.get(`${process.env.userBase}/get/users/number`);
-    const transactions = await transactionDb.sum("amount");
+    const transactions = await transactionDb.count("id");
     const requests = await withDrawalRequest.count({
       where: {
         attendedTo: false,

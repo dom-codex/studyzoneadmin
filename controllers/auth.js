@@ -74,3 +74,27 @@ exports.verifyAccount = async (req, res, next) => {
     message: "verified",
   });
 };
+exports.verifyAdmin = async(req,res,next)=>{
+  try{
+    const {adminId} = req.query
+    const admin = await adminDb.findOne({
+      where:{
+        uid:adminId
+      },
+      attributes:["id"]
+    })
+    if(!admin){
+      return res.status(404).json({
+        message:"admin not found"
+      })
+    }
+    res.status(200).json({
+      message:"successs"
+    })
+  }catch(e){
+    console.log(e)
+    res.status(500).json({
+      message:"an error occured"
+    })
+  }
+}

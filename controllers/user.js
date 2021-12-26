@@ -29,3 +29,20 @@ exports.toggleUserStatus = async (req, res, next) => {
     res.status(500).end();
   }
 };
+exports.getUserDetails = async(req,res,next)=>{
+  try{
+    const {user} = req.query
+    const {data} = await axios(`${process.env.userBase}/get/user/info?userId=${user}`)
+    console.log(data)
+    res.status(data.code).json({
+      message:data.code==404?"user not found":"success",
+      ...data.user,
+      earnings:data.totalEarned.totalEarned
+    })
+  }catch(e){
+    console.log(e)
+    res.status(500).json({
+      message:"an error occurred"
+    })
+  }
+}
