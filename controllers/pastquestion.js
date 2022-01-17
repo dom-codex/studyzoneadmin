@@ -1,6 +1,7 @@
 const pricingDb = require("../models/pricing");
 const validateFullSchool = require("../utility/validateFullSchool");
 const { Op } = require("sequelize");
+const axios = require("axios")
 exports.getPastQuestionsPrice = async (req, res, next) => {
   try {
     const {
@@ -108,6 +109,17 @@ await pricingLog.save()
     ],
   }
 })*/
+try{
+  const uri = `${process.env.userBase}/notifications/realtime/update`
+  await axios.post(uri,{
+    name:"pricing",
+    value:{
+      level:level.lid,
+      semester:semester,
+      price:pricing
+    }
+  })
+}catch(e){console.log(e)}
 res.status(200).json({
   code:200,
   message:"price updated"

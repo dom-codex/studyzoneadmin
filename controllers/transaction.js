@@ -1,7 +1,9 @@
 const validateSchool = require("../utility/validateFullSchool");
 const transactionDb = require("../models/transaction");
 const pricingDb = require("../models/pricing");
+const notificationDb = require("../models/notification")
 const sequelize = require("sequelize");
+const IO = require("../socket")
 exports.createTransaction = async (req, res, next) => {
   try {
     const {
@@ -54,6 +56,14 @@ exports.createTransaction = async (req, res, next) => {
         },
       }
     );
+    //create notification
+    const notification = await notificationDb.create({
+      subject:"NEW PURCHASE",
+      notification:`user with email ${email} has purchased ${level.name} ${department.name} ${school.name} pastquestions for ${amount}`
+    })
+    delete transaction.dataValues["id"]
+    delete notification.dataValues["id"]
+    IO.getIO().emit("transaction",{...transaction.dataValues,...notification.dataValues})
     res.status(200).json({
       code: 200,
       message: "transaction created",

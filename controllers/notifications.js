@@ -46,6 +46,7 @@ exports.getNotifications = async (req, res, next) => {
     }
     const limit = 1;
     const { page } = req.query;
+    console.log(page)
     const notifications = await notificationDb.findAll({
       limit: limit,
       offset: page * limit,

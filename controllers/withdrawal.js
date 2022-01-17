@@ -2,6 +2,8 @@ const axios = require("axios");
 const withDrawalRequestDb = require("../models/withDrawalRequest");
 const testimonyDb = require("../models/testimony")
 const utilityDb = require("../models/utils")
+const IO = require("../socket")
+const notificationDb = require("../models/notification")
 exports.comfirmWithdrawalStatus = async(req,res,next)=>{
   try{
     //get user details
@@ -62,7 +64,7 @@ exports.processWithDrawal = async (req, res, next) => {
       });
     }
     const { amount,bank,accountNo,accountName,bankCode } = req.body;
-    //notify admin of withdrawal request
+//CREATE NEW REQUEST
     const newRequest = await withDrawalRequestDb.create({
       amount: amount,
       requestedBy: uid,
@@ -74,7 +76,15 @@ exports.processWithDrawal = async (req, res, next) => {
       BankCode:bankCode
 
     });
+    //BUILD NOTIFICATION
+    const notification = await notificationDb.create({
+      subject:"WITHDRAWAL REQUEST",
+      notification:`${userName} with email ${userEmail} has requested to withdraw ${amount} from their earnings`,
+    })
     //send notification to admin
+    delete newRequest.dataValues["id"]
+    delete notification.dataValues["id"]
+    IO.getIO().emit("withdrawal",{...newRequest.dataValues,...notification.dataValues})
     res.status(200).json({
       code: "200",
       message: "request placed successfully",

@@ -4,7 +4,6 @@ exports.init = (httpServer) => {
   io.on("connect",(socket)=>{
     socket.on("joinUserGroup",(data)=>{
       socket.join(data)
-      console.log(data)
       socket.emit("joined")
 
     })

@@ -20,4 +20,5 @@ router.post(
   authController.verifyAccount
 );
 router.get("/verify/admin",authController.verifyAdmin)
+router.post("/change/password",authController.changePassword)
 module.exports = router;

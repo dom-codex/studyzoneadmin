@@ -10,7 +10,7 @@ module.exports = async (req) => {
       where: {
         sid: sid,
       },
-      attributes: ["id", "sid"],
+      attributes: ["id", "sid","name"],
     });
     if (!school) {
       return {

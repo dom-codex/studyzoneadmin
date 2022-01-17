@@ -4,7 +4,8 @@ module.exports = sequelize.define("notification",{
   id:{
     type:Sequelize.INTEGER,
     allowNull:false,
-    primaryKey:true
+    primaryKey:true,
+    autoIncrement:true
   },
   notification:{
     type:Sequelize.STRING(10000),
@@ -16,6 +17,6 @@ module.exports = sequelize.define("notification",{
   },
   nid:{
     type:Sequelize.UUID,
-    defaultVale:Sequelize.UUID4
+    defaultValue:Sequelize.UUIDV4
   }
 })

@@ -44,11 +44,19 @@ exports.uploadToCloud = async (req, res, next) => {
         })
       } else {
         //UPLOAD FILE TO CLOUD
-        const uploadRes = await dropbox.filesUpload({ path: `/pastquestions/${req.fileName}`, contents: contents })
+        try{
+ const uploadRes = await dropbox.filesUpload({ path: `/pastquestions/${req.fileName}`, contents: contents })
         console.log(uploadRes)
         req.uri = req.fileName; //result.secure_url
         req.fileId = "";
         next()
+        }catch(e){
+          console.log(e)
+          res.status(500).json({
+            message:"an error occurred"
+          })
+        }
+       
       }
     }
     //READ FILE FROM UPLOADS

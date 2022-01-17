@@ -46,15 +46,7 @@ app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname,"uploads")));
-app.use(async (req, res, next) => {
- 
-  //const users = await user.findAll();
-  //console.log(users);
-  //const user = await userdb.findAll();
-  //  console.log(user);
 
-  next();
-});
 app.use("/auth", authRoute);
 app.use("/create", schoolRoute);
 app.use("/withdrawal", withdrawRoute);
@@ -110,8 +102,6 @@ sequelize.sync({ alter: true }).then(() => {
   createAdmin()
   server.listen(process.env.PORT);
   io.init(server);
-
-  console.log("listening...");
 });
 const createAdmin = async()=>{
   const ad = await admin.findOne({
@@ -137,7 +127,8 @@ const createAdmin = async()=>{
       { name: "maxWithdrawal", value: "5000" },
       { name: "freeTrialAvailable", value: "true" },
       { name: "referralBonus", value: "50" },
-      {name:"numberOfWithdrawalBeforeTestimonyEnforcement", value:1}
+      {name:"numberOfWithdrawalBeforeTestimonyEnforcement", value:1},
+      {name:"allowCardPayment",value:"true"}
     ];
     await utils.bulkCreate(util, { validate: true });
   }

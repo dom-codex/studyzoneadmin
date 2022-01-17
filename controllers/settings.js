@@ -1,4 +1,5 @@
 const utilsDb = require("../models/utils");
+const axios = require("axios")
 exports.upDateSettings = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -18,6 +19,17 @@ exports.upDateSettings = async (req, res, next) => {
         },
       }
     );
+    //SEND NOTIFICATION
+    if(name =="allowCardPayment"||name=="minWithdrawal"||name=="freeTrialAvailable"){
+      const uri = `${process.env.userBase}/notifications/realtime/update`
+      try{
+        await axios.post(uri,{
+          name:name,
+          value:value
+        })
+        
+      }catch(e){console.log(e)}
+    }
     res.status(200).json({
       code: 200,
       message: "updated",
@@ -48,3 +60,22 @@ exports.getSettings = async (req, res, next) => {
     res.status(500).end();
   }
 };
+exports.getSetting = async(req,res,next)=>{
+  try{
+    const {name} = req.query
+    const setting = await utilsDb.findOne({
+      where:{
+        name:name
+      },
+      attributes:{exclude:["id","created","updatedAt"]}
+    })
+    return res.status(200).json({
+      setting:setting.dataValues
+    })
+  }catch(e){
+    console.log(e)
+    res.status(500).json({
+      message:"an error occurred"
+    })
+  }
+}

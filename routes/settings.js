@@ -12,4 +12,5 @@ router.post(
   validator.validateAdminNew,
   settingsController.upDateSettings
 );
+router.get("/get/setting",settingsController.getSetting)
 module.exports = router;

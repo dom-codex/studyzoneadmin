@@ -22,6 +22,7 @@ const {
   createTransaction,
   createTransactionForKeyOrCardPayment,
   confirmTransaction,
+  getCardPaymentSettings
 } = require("../requestsFromUserController/transactions");
 router.get("/get/school", schController.fetchSchoolsDetails);
 router.get(
@@ -67,4 +68,5 @@ router.post(
   createTransactionForKeyOrCardPayment
 );
 router.get("/get/transaction/status", confirmTransaction);
+router.get("/get/payment/settings",getCardPaymentSettings)
 module.exports = router;

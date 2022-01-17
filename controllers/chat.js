@@ -121,9 +121,11 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
     //save image to cloud
     const pathTofile = path.join(`./uploads/${fileName}`);
     const dropbox = new Dropbox({ accessToken: process.env.dropboxToken })
-    const uploadCallBack = async(contents) => {
+    const uploadCallBack = async(contents) =>
+    {
+      try{
       const result = await dropbox.filesUpload({ path: `/support/${fileName}`,contents })
-      console.log(result)
+      
       //GET LINK TO UPLOADED IMAGE
       const newLink = await getLink("support", fileName)
 
@@ -177,6 +179,12 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
           message: "sent",
         });
       })
+      }catch(e){
+        res.status(500).json({
+          message:"an error occurred"
+        })
+      }
+
     }
     fs.readFile(pathTofile, async(e, contents) => {
       uploadCallBack(contents)

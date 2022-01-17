@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
         message: "invalid request",
       });
     }
-    const limit = 30;
+    const limit = 1;
     const paymentMethod = getPaymentMethod(filter)
     const transactions = await transactionDb.findAll({
       where:{

@@ -98,3 +98,40 @@ exports.verifyAdmin = async(req,res,next)=>{
     })
   }
 }
+exports.changePassword = async(req,res,next)=>{
+  try{
+    const {newPassword,oldPassword,adminId} = req.body
+    //FIND ADMIN
+    const admin = await adminDb.findOne({
+      where:{
+        uid:adminId
+      },
+      attributes:["id","uid","password"]
+    })
+    if(!admin){
+      return res.status(404).json({
+        message:"admin not found"
+      })
+    }
+    //CHECK PASSWORD
+    const passwordValid = await bcrypt.compare(oldPassword,admin.password)
+    if(!passwordValid)return res.status(400).json({
+      message:"invalid password"
+    })
+    //CHECK PASSWORD LENGTH
+    if(newPassword.length<8)return res.status(401).json({message:"invalid password length"})
+    //HASH NEW PASSWORD
+    const hashedPassword = await bcrypt.hash(newPassword,12)
+    //SET NEW PASSWORD
+    admin.password = hashedPassword
+    await admin.save()
+    return res.status(200).json({
+      message:"password changed"
+    })
+  }catch(e){
+    console.log(e)
+    res.status(500).json({
+      message:"an error occurred"
+    })
+  }
+}
