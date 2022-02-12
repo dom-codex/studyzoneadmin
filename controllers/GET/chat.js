@@ -67,9 +67,9 @@ exports.getChatList = async (req, res) => {
       });
     }
     const { page } = req.query;
-    const limit = 10;
+    const limit = 1;
     const chatlist = await chatlistDb.findAll({
-      order:[["updatedAt","DESC"]],
+      order:[["updatedAt","ASC"]],
       limit: limit,
       offset: page * limit,
       attributes: { exclude: ["id"] },
