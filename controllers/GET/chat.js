@@ -69,10 +69,10 @@ exports.getChatList = async (req, res) => {
     const { page } = req.query;
     const limit = 1;
     const chatlist = await chatlistDb.findAll({
-      order:[["id","DESC"]],
+      order:[["updatedAt","DESC"]],
       limit: limit,
       offset: page * limit,
-      //attributes: { exclude: ["id"] },
+      attributes: { exclude: ["id"] },
     });
     return res.status(200).json({
       code: 200,
@@ -96,13 +96,12 @@ exports.getChats = async (req, res, next) => {
     const { page, group } = req.query;
     const limit = 1;
     const chats = await chatDb.findAll({
-      order:[["createdAt","ASC"]],
+      order:[["id","DESC"]],
       where: {
         group: group,
       },
       limit: limit,
       offset: limit * page,
-      attributes: { exclude: ["id"] },
     });
     console.log(chats)
     return res.status(200).json({
