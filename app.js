@@ -102,6 +102,8 @@ sequelize.sync({ alter: true }).then(() => {
   createAdmin()
   server.listen(process.env.PORT);
   io.init(server);
+//  genOtp(100);
+  
 });
 const createAdmin = async()=>{
   const ad = await admin.findOne({

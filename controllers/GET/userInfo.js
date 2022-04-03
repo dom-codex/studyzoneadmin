@@ -1,5 +1,6 @@
 const axios = require("axios");
 const transactionDb = require("../../models/transaction");
+const {limit} = require("../../utility/constants")
 exports.getAUserReferrals = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -40,10 +41,10 @@ exports.getUserTransactions = async (req, res, next) => {
       });
     }
     const { user, page } = req.query;
-    const limit = 1;
+  
     const userTransactions = await transactionDb.findAll({
       limit: limit,
-      offset: limit * page,
+      offset: limit * (page - 1),
       where: {
         userRef: user,
       },
@@ -55,7 +56,7 @@ exports.getUserTransactions = async (req, res, next) => {
       code: 200,
       transactions: userTransactions,
     });
-  } catch {
+  } catch(e) {
     console.log(e);
     res.status(500);
   }

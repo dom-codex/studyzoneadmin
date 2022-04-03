@@ -4,10 +4,16 @@ exports.getVideoLink = async(req,res,next)=>{
   try{
 const{url} = req.query
 const dropbox = new Dropbox({accessToken:process.env.dropboxToken})
-//const {result:{id}} = await dropbox.filesGetMetadata({path:`/testimony/${url}`})
+//const {result} = await dropbox.filesGetMetadata({path:`/testimony/${url}`})
 //console.log(result1)
-const {result:{links}} = await dropbox.sharingListSharedLinks({path:`/testimony/${url}`,direct_only:true})
-const newLink = links[0].url.replace("www.dropbox.com","dl.dropboxusercontent.com")
+ //console.log(result)
+const  {result:{links}}= await dropbox.sharingListSharedLinks({path:`/testimony/${url}`,direct_only:false})
+console.log(links)
+const newLink = links[0].url //.replace("www.dropbox.com","dl.dropboxusercontent.com")
+const resp = await dropbox.filesDownload({path:`/testimony/${url}`})
+res.status(200).write(resp.result.fileBinary,"binary")
+res.end(null,"binary")
+return
 return res.status(200).json({
   link:newLink,
   message:"retrieved"

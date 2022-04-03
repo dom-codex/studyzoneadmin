@@ -2,6 +2,7 @@ const schoolDb = require("../models/school");
 const facultyDb = require("../models/faculty");
 const departmentDb = require("../models/department");
 const levelDb = require("../models/levels");
+const axios = require("axios")
 exports.createSchool = async (req, res, next) => {
   try {
     const canCreate = req.canCreate;
@@ -157,12 +158,23 @@ exports.deleteSchool = async (req, res, next) => {
         message: "invalid credentials",
       });
     }
+    const school = await schoolDb.findOne({
+      where:{
+        sid:sid
+      },
+      attributes:{exclude:["id","createdAt","updatedAt"]}
+    })
     await schoolDb.destroy({
       where: {
         sid: sid,
         name: name,
       },
     });
+    //SEND DELETE NOTIFICATION
+    const uri = `${process.env.userBase}/notifications/notify/delete/school`
+    await axios.post(uri,{
+      ...school.dataValues
+    })
     res.status(200).json({
       code: 200,
       message: "deleted successfully",

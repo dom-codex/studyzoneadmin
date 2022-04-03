@@ -156,7 +156,7 @@ exports.getVendorKeys = async (req, res, next) => {
     });
     const keys = await lisenseKeyDb.findAll({
       limit: limit,
-      offset: page * limit,
+      offset: (page-1) * limit,
       where: {
         vendorId: vendor.id,
         isUsed: type == "USED",

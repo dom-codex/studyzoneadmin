@@ -4,7 +4,9 @@ const departmentDb = require("../../models/department");
 const { Op } = require("sequelize");
 const chatlistDb = require("../../models/chatlist");
 const chatDb = require("../../models/chat");
-const sequelize = require("sequelize")
+const sequelize = require("sequelize");
+const { limit } = require("../../utility/constants");
+
 exports.getGroupChatDetails = async (req, res) => {
   try {
     //get user from req
@@ -67,11 +69,10 @@ exports.getChatList = async (req, res) => {
       });
     }
     const { page } = req.query;
-    const limit = 1;
     const chatlist = await chatlistDb.findAll({
       order:[["updatedAt","DESC"]],
       limit: limit,
-      offset: page * limit,
+      offset: (page-1) * limit,
       attributes: { exclude: ["id"] },
     });
     return res.status(200).json({
@@ -93,17 +94,25 @@ exports.getChats = async (req, res, next) => {
         message: "admin does not exist",
       });
     }
-    const { page, group } = req.query;
-    const limit = 1;
-    const chats = await chatDb.findAll({
-      order:[["id","DESC"]],
+    const { page, group,firstLoad,lastTime } = req.query;
+    const chats = firstLoad == "true"? await chatDb.findAll({
+      order:[["id","DESC"]],  
+      limit: limit,
       where: {
         group: group,
       },
-      limit: limit,
-      offset: limit * page,
+      //offset: limit * page,
+    }): await chatDb.findAll({
+      order:[["id","DESC"]],
+      limit:limit,
+      where:{
+      group:group,
+      timeSent:{
+        [sequelize.Op.lt]: parseInt(lastTime)
+      }
+    }
     });
-    console.log(chats)
+  
     return res.status(200).json({
       code: 200,
       message: "retrieved",
@@ -116,17 +125,25 @@ exports.getChats = async (req, res, next) => {
 };
 exports.getOfflineChats = async(req,res,next)=>{
   try{
-    const {chatIds,group} = req.body
-    const chats = await chatDb.findAll({
+    const {timeSent,group,firstLoad} = req.body
+    const chats = firstLoad? await chatDb.findAll({
       where:{
         sender:"ADMIN",
         group:group,
-        chatId:{
-          [sequelize.Op.notIn]:chatIds
-
+        timeSent:{
+          [sequelize.Op.gt]:timeSent
         },
       },
       attributes:{exclude:["id","createdAt","updatedAt"]}
+    }) : await chatDb.findAll({
+      limit:limit,
+      where:{
+        sender:"ADMIN",
+        group:group,
+        timeSent:{
+          [sequelize.Op.lt]:timeSent
+        }
+      }
     })
     return res.status(200).json({
       code:200,

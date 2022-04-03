@@ -5,6 +5,7 @@ const {
   compileRequestResult,
 } = require("../../utility/withdrawalRequestUtils");
 const { Op } = require("sequelize");
+const { limit } = require("../../utility/constants");
 module.exports = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -15,10 +16,10 @@ module.exports = async (req, res, next) => {
         message: "cannot carry out this operation",
       });
     }
-    const limit = 10;
     const requests = await withDrawalDb.findAll({
       limit: limit,
-      offset: page * 1,
+      offset: (page - 1) * 1,
+      order:[["createdAt","DESC"]],
       where: {
         status: status,
       },

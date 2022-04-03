@@ -5,7 +5,8 @@ const school = require("../../models/school");
 const transactionDb = require("../../models/transaction");
 const level = require("./level");
 const getPaymentMethod = require("../../utility/getPaymentMethod")
-const { Op} = require("sequelize")
+const { Op} = require("sequelize");
+const { limit } = require("../../utility/constants");
 module.exports = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -16,16 +17,17 @@ module.exports = async (req, res, next) => {
         message: "invalid request",
       });
     }
-    const limit = 1;
     const paymentMethod = getPaymentMethod(filter)
     const transactions = await transactionDb.findAll({
+       limit: limit,
+      offset: (page - 1) * limit,
+      order:[["id","DESC"]],
       where:{
         paymentMethod:{
           [Op.in]:paymentMethod
         }
       },
-      limit: limit,
-      offset: page * limit,
+     
       attributes: {
         exclude: [
           "id",
@@ -55,6 +57,7 @@ module.exports = async (req, res, next) => {
         },
       ],
     });
+  
     return res.status(200).json({
       code: 200,
       transactions: transactions,

@@ -10,6 +10,7 @@ const keyGenController = require("../controllers/lisenseKey");
 const transactionController = require("../controllers/transaction");
 const validator = require("../validators/validateadmin");
 const vendorController = require("../controllers/vendor");
+const multer = require("multer");
 router.post(
   "/school",
   schoolHelper.validateSchoolCreationDetails,
@@ -27,7 +28,23 @@ router.post(
 );
 router.post(
   "/pq",
-  uploadHelper.upload,
+  (req,res,next)=>{
+    uploadHelper.upload(req,res,(err)=>{
+      if(err instanceof multer.MulterError){
+        console.log(err.message)
+        return res.status(401).json({
+          message:err.message
+        })
+      }else if(err){
+        return res.status(400).json({
+          message:"upload failed"
+        })
+      }
+      else{
+        next()
+      }
+    })
+  },
   uploadHelper.validateAdmin,
   uploadHelper.uploadToCloud,
   uploadController.createPastQuestion

@@ -6,6 +6,7 @@ const axois = require("axios");
 const { Op } = require("sequelize");
 const vendorDb = require("../models/vendor");
 const { limit } = require("../utility/constants");
+const { generateOtp } = require("../utility/generateOtp");
 exports.genLisenseKey = async (req, res, next) => {
   try {
     const { whom, nkeys, worth } = req.body;
@@ -26,7 +27,7 @@ exports.genLisenseKey = async (req, res, next) => {
     });
     let i = 1;
     while (i <= nkeys) {
-      const newKey = nanoid(10);
+      const newKey = await generateOtp();//nanoid(10);
       const keyObj = {
         key: newKey,
         forWhom: vendor != null ? vendor.name : "ADMIN",
@@ -137,10 +138,11 @@ exports.getLisensekeys = async (req, res, next) => {
     const keys = await lisenseKeyDb.findAll({
       where: condition,
       limit: limit,
-      offset: page * limit,
+      order:[["updatedAt","DESC"]],
+      offset: (page-1) * limit,
       attribute: { exclude: ["adminId", "createdAt", "updatedAt"] },
     });
-
+   
     return res.status(200).json({
       keys: keys,
       code: 200,

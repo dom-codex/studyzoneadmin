@@ -77,6 +77,7 @@ exports.validateAdminOnGetRequest = async (req, res, next) => {
         uid: adminId,
       },
     });
+    
     if (!admin) {
       return res.json({
         code: 404,

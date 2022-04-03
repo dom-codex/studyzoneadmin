@@ -22,8 +22,9 @@ exports.getPastQuestions = async (req, res, next) => {
         message: "invalid information",
       });
     //get pastquestions
-    const offset = constants.limit * page;
-    const pastquestions = await pastquestionDb.findAll({
+    const offset = constants.limit * (page-1);
+    const pastquestions = await
+     pastquestionDb.findAll({
       where: {
         schoolId: institutionIds[0],
         facultyId: institutionIds[1],

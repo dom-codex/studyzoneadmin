@@ -6,7 +6,8 @@ exports.getAnnouncements = async(req,res,next)=>{
     const announcements = await announcementDb.findAll({
       /*limit:limit,
       offset:limit*page,*/
-      attributes:{exclude:["id","updatedAt"]}
+      attributes:{exclude:["id","updatedAt"]},
+      order:[["id","DESC"]]
     })
     return res.status(200).json({
       code:200,

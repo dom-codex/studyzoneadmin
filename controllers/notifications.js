@@ -1,6 +1,7 @@
 const axios = require("axios");
 const notificationDb = require("../models/notification");
 const announcementDb = require("../models/announcement");
+const { limit } = require("../utility/constants");
 exports.postNotificationToUser = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -44,12 +45,13 @@ exports.getNotifications = async (req, res, next) => {
         message: "admin not found",
       });
     }
-    const limit = 1;
+    
     const { page } = req.query;
-    console.log(page)
+    
     const notifications = await notificationDb.findAll({
       limit: limit,
-      offset: page * limit,
+      order:[["id","DESC"]],
+      offset: (page - 1) * limit,
     });
     return res.status(200).json({
       code: 200,

@@ -28,7 +28,14 @@ const storage = multer.diskStorage({
   },
   //add mime type and size filter
 });
-exports.upload = multer({ storage: storage }).single("pq");
+exports.upload = multer({ storage: storage,limits:{fileSize:5*1024*1024},fileFilter:(req,file,callback)=>{
+  if(file.size > 5*1024*1024){
+    return callback(new Error("file too large"),false)
+  }else if(file.mimetype != "application/pdf"){
+    return callback(new Error("invalid file format"),false)
+  }
+  return callback(null,true)
+} }).single("pq");
 exports.uploadToCloud = async (req, res, next) => {
   try {
     const dropbox = new Dropbox({ accessToken: process.env.dropboxToken })

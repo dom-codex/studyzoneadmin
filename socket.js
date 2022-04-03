@@ -8,6 +8,7 @@ exports.init = (httpServer) => {
 
     })
     socket.on("join",(data)=>{
+      console.log(data)
       socket.join(data)
     //  socket.emit("joinedUserRoom")
     })

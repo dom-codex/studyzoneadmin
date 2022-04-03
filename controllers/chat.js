@@ -23,7 +23,9 @@ exports.receiveMessageFromUser = async (req, res, next) => {
       email,
       mediaName,
       mediaUrl,
+      timeSent
     } = req.body;
+    console.log(timeSent)
     //find user in chatlist
     const chatlistUser = await chatListDb.findOne({
       where: {
@@ -42,6 +44,18 @@ exports.receiveMessageFromUser = async (req, res, next) => {
         name,
         email,
       });
+          //create chat
+          const newChat = await chatDb.create({
+            sender: sender,
+            message: message,
+            time: time,
+            chatId: chatId,
+            group: group,
+            messageType: mediaName ? "RECEIVER_WITH_MEDIA" : "RECEIVER",
+            mediaName: mediaName,
+            mediaUrl: mediaUrl,
+            timeSent:parseInt(timeSent)
+          });
     } else {
       //create chat
       const newChat = await chatDb.create({
@@ -53,6 +67,7 @@ exports.receiveMessageFromUser = async (req, res, next) => {
         messageType: mediaName ? "RECEIVER_WITH_MEDIA" : "RECEIVER",
         mediaName: mediaName,
         mediaUrl: mediaUrl,
+        timeSent:parseInt(timeSent)
       });
       //update chatListDb
       chatlistUser.lastMessage = message;
@@ -78,6 +93,7 @@ exports.receiveMessageFromUser = async (req, res, next) => {
       messageType: mediaName ? "RECEIVER_WITH_MEDIA" : "RECEIVER",
       mediaName: mediaName,
       mediaUrl: mediaUrl,
+      timeSent:parseInt(timeSent)
     });
     res.status(200).json({
       code: 200,
@@ -129,7 +145,8 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
       //GET LINK TO UPLOADED IMAGE
       const newLink = await getLink("support", fileName)
 
-      const { message, group, sender, time, receiver } = req.body;
+      const { message, group, sender, time, receiver,timeSent } = req.body;
+     const msgTime = Date.now()
       const newChat = await chatDb.build({
         message: message,
         time: time,
@@ -138,6 +155,7 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
         messageType: "SENDER_WITH_MEDIA",
         mediaName: fileName,
         mediaUrl: newLink,
+        timeSent:msgTime //timeSent
       });
       //send message to user
       const uri = `${process.env.userBase}/support/send/message/to/user`;
@@ -149,6 +167,7 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
         chatId: newChat.chatId,
         mediaName: fileName,
         mediaUrl: newLink,
+        timeSent: msgTime//timeSent
       });
       //if successful commit to dataBase
       if (data.code != 200) {
@@ -176,6 +195,7 @@ exports.sendMediaMessageToUser = async (req, res, next) => {
         res.status(200).json({
           code: 200,
           chatId: newChat.chatId,
+          msgTime:msgTime,
           message: "sent",
         });
       })
@@ -213,13 +233,15 @@ exports.sendMessageToUser = async (req, res, next) => {
         message: "admin does not exist",
       });
     }
-    const { message, group, sender, time, receiver } = req.body;
+    const { message, group, sender, time, receiver,timeSent } = req.body;
+    const msgTime = Date.now()
     const newChat = await chatDb.build({
       message: message,
       time: time,
       sender: sender,
       group: group,
       messageType: "SENDER",
+      timeSent:msgTime
     });
     //send message to user
     const uri = `${process.env.userBase}/support/send/message/to/user`;
@@ -229,6 +251,7 @@ exports.sendMessageToUser = async (req, res, next) => {
       time,
       sender,
       chatId: newChat.chatId,
+      timeSent:msgTime
     });
     //if successful commit to dataBase
     if (data.code != 200) {
@@ -250,6 +273,7 @@ exports.sendMessageToUser = async (req, res, next) => {
     res.status(200).json({
       code: 200,
       chatId: newChat.chatId,
+      msgTime:msgTime,
       message: "sent",
     });
   } catch (e) {

@@ -3,16 +3,19 @@ const facultyDb = require("../../models/faculty");
 const extractIds = require("../../utility/extractIds");
 const compileData = require("../../utility/compileSchQueryResult");
 const sequelize = require("sequelize");
-exports.fetchSchoolsDetails = async (req, res, next) => {
+const { limit } = require("../../utility/constants");
+
+exports.fetchSchoolsDetails = async (req, res, next,forward=false) => {
   try {
     const { page, type } = req.query;
-    const limit = 1
+    
     const schools = await schDb.findAll({
       where: {
         type: type,
       },
       limit: limit,
-      offset: page * limit,
+      order:[["id",!forward?"DESC":"ASC"]],
+      offset: (page - 1) * limit,
       attributes: [
         "id",
         "name",
@@ -39,8 +42,14 @@ exports.fetchSchoolsDetails = async (req, res, next) => {
       ],
     });
     const data = compileData(schools, facultyInfo);
+    const numberOfSchools = await schDb.count({
+      where:{
+        type:type
+      }
+    })
     res.status(200).json({
       schools: data,
+      numberOfSchools:numberOfSchools,
       code: 200,
     });
   } catch (e) {

@@ -24,17 +24,17 @@ const {
   confirmTransaction,
   getCardPaymentSettings
 } = require("../requestsFromUserController/transactions");
-router.get("/get/school", schController.fetchSchoolsDetails);
+router.get("/get/school",(req,res,next)=> schController.fetchSchoolsDetails(req,res,next,true));
 router.get(
   "/get/school/faculty",
   schValidator.validateSchoolForUserRequest,
-  facultyController
+  (req,res,next)=>facultyController(req,res,next,true)
 );
 router.get(
   "/get/school/faculty/department",
   schValidator.validateSchoolForUserRequest,
   facultyValidator.validateFaculty,
-  departmentController.fetchDepartment
+  (req,res,next)=>departmentController.fetchDepartment(req,res,next,true)
 );
 router.get(
   "/get/school/faculty/department/levels",

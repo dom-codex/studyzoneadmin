@@ -11,7 +11,7 @@ exports.searchForVendor = async(req,res,next)=>{
       where:{
     
             name: {
-              [Op.like]: `%${query}%`,
+              [Op.iLike]:`%${query}%`,
             },
           
       },
@@ -35,7 +35,7 @@ exports.searchForFaculty = async(req,res,next)=>{
     const faculties = await facultyDb.findAll({
       where:{
         name:{
-          [Op.like]:`%${query}%`
+          [Op.iLike]:`%${query}%`
         }
       },
       attributes:["id","name","fid"]
@@ -57,7 +57,7 @@ exports.searchForDepartment = async(req,res,next)=>{
     const departments = await departmentDb.findAll({
       where:{
         name:{
-          [Op.like]:`%${query}%`
+          [Op.iLike]:`%${query}%`
         }
       },
       attributes:["id","name","did"]
@@ -79,7 +79,7 @@ exports.searchForPastQuestion = async(req,res,next)=>{
     const pastquestions = await pastquestionDb.findAll({
       where:{
         title:{
-          [Op.like]:`%${query}%`
+          [Op.iLike]:`%${query}%`
         }
       },
       attributes:["id","pid","title","semester"]
@@ -99,12 +99,12 @@ exports.searchForSchool = async (req, res, next) => {
         [Op.or]: [
           {
             name: {
-              [Op.like]: `%${query}%`,
+              [Op.iLike]: `%${query}%`,
             },
           },
           {
             nameAbbr: {
-              [Op.like]: `%${query}%`,
+              [Op.iLike]: `%${query}%`,
             },
           },
         ],

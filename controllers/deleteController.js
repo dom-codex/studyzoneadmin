@@ -2,6 +2,7 @@ const pastQuestionDb = require("../models/pastQuestion");
 const { Storage } = require("@google-cloud/storage");
 const cloudinary = require("cloudinary")
 const {Dropbox} = require("dropbox")
+const axios = require("axios")
 exports.deletePastQuestion = async (req, res, next) => {
   try {
     const { canProceed } = req;
@@ -28,6 +29,10 @@ exports.deletePastQuestion = async (req, res, next) => {
     //await clodunary.v2.uploader.destroy(pq.cloudUri)
     //delete from database
     await pq.destroy();
+    const uri = `${process.env.userBase}/notifications/notify/delete/pastquestion`
+    await axios.post(uri,{
+      ...pq.dataValues
+    })
     res.status(200).json({
       code: 200,
       message: "deleted successfully",

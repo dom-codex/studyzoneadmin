@@ -34,11 +34,13 @@ exports.comfirmWithdrawalStatus = async(req,res,next)=>{
       where:{
         requestedBy:user,
         attendedTo:true,
-        status:"COMFRIMED"
+        status:"APPROVED"
       }
     })
+    
     //compare and act accordingly
-    if(utility.value.toString() > withdrawals.count.toString()){
+    console.log(parseInt(utility.value) > parseInt(withdrawals.count))
+    if(parseInt(utility.value) > parseInt(withdrawals.count)){
       return res.status(200).json({
         canProceed:true
       })
@@ -76,6 +78,13 @@ exports.processWithDrawal = async (req, res, next) => {
       BankCode:bankCode
 
     });
+    //FIND TESTIMONY
+    const testimony = await testimonyDb.findOne({
+      wehre:{
+        user:uid
+      },
+      attributes:["videoLink"]
+    })
     //BUILD NOTIFICATION
     const notification = await notificationDb.create({
       subject:"WITHDRAWAL REQUEST",
@@ -84,7 +93,7 @@ exports.processWithDrawal = async (req, res, next) => {
     //send notification to admin
     delete newRequest.dataValues["id"]
     delete notification.dataValues["id"]
-    IO.getIO().emit("withdrawal",{...newRequest.dataValues,...notification.dataValues})
+    IO.getIO().emit("withdrawal",{...newRequest.dataValues,...notification.dataValues,videoLink:testimony.dataValues.videoLink})
     res.status(200).json({
       code: "200",
       message: "request placed successfully",
@@ -142,6 +151,7 @@ exports.processWithDrawalRequestStatus = async (req, res, next) => {
     const updated = await withDrawalRequestDb.update(
       {
         status: status,
+        attendedTo:true
       },
       {
         where: {
